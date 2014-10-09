@@ -27,6 +27,26 @@
     <servlet-name>IdentifyServlet</servlet-name>
     <servlet-class>com.selfedu.IdentifyServlet</servlet-class>
   </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>InitParamServlet</servlet-name>
+    <servlet-class>com.selfedu.InitParamServlet</servlet-class>
+    <init-param>
+    	<param-name>helloween</param-name>
+    	<param-value>password</param-value>
+    </init-param>
+    <init-param>
+    	<param-name>admin</param-name>
+    	<param-value>admin</param-value>
+    </init-param>
+    <init-param>
+    	<param-name>babyface</param-name>
+    	<param-value>babyface</param-value>
+    </init-param>
+    
+  </servlet>
+
 
 
 
@@ -46,6 +66,10 @@
   <servlet-mapping>
     <servlet-name>IdentifyServlet</servlet-name>
     <url-pattern>/servlet/IdentifyServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>InitParamServlet</servlet-name>
+    <url-pattern>/servlet/InitParamServlet</url-pattern>
   </servlet-mapping>
 
 </web-app>
