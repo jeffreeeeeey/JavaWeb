@@ -79,7 +79,7 @@ public class InitParamServlet extends HttpServlet {
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
-		Enumeration params = this.getInitParameterNames();
+		Enumeration<String> params = this.getInitParameterNames();
 		
 		while (params.hasMoreElements()) {
 			String usernameParam = (String) params.nextElement();
