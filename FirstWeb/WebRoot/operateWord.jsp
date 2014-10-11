@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
 <%@ page import = "java.sql.*" %>
 <%! 
@@ -8,9 +9,10 @@
 <%
 	String name = request.getParameter("name");
 	String action = request.getParameter("action");
+	String sql = null;
 	
 	if("add".equals(action)){
-		String sql = "INSERT INTO word " + "(name) value " + "('" + forSQL(name) + "')";
+		sql = "INSERT INTO words " + "(name) value " + "('" + name + "')";
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet resultSet = null;
@@ -19,10 +21,14 @@
 			Class.forName("com.mysql.jdbc.Driver"); 
 			connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
 			statement = connection.createStatement();
+			out.println("good");
+			out.println("executing: "+sql);
 			result = statement.executeUpdate(sql);
-			out.println("added " + result + " words");
+			
 		}catch(SQLException e){
+			out.println("executing: "+sql);
 			e.printStackTrace();
+			
 		}finally{ 
 			if(resultSet != null)
 				resultSet.close(); 
@@ -31,13 +37,18 @@
 			if(connection != null) 
 				connection.close(); 
 		}//end of finally
+		
+		out.println("<html> <body>");
+		out.println("add " + result + "words");
+		out.println("</body></html>");
 	}else if("del".equals(action)){
 		
-	}else if("edit".equals(action){
+	}else if("edit".equals(action)){
 		String id = request.getParameter("id");
-		String sql = "SELECT * FORM words WHERE id = " + id;
+		sql = "SELECT * FORM words WHERE id = " + id;
 		
 	}
+	
 	
  %>
 
@@ -47,7 +58,7 @@ String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
   <head>
     <base href="<%=basePath%>">
@@ -67,5 +78,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   <body>
     This is my JSP page. <br>
+    
   </body>
 </html>
