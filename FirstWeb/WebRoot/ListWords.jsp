@@ -30,8 +30,10 @@
 				statement = connection.createStatement();
 				resultSet = statement.executeQuery("select * from words");
 				while(resultSet.next()){ 
+					int id = resultSet.getInt("id");
 					String name = resultSet.getString("name"); 
-					out.println(name);
+					
+					out.println("<a href = \"WordDetails.jsp?id=" + id +"\">" + name + "</a>");
 					out.println("</br>"); 
 					} 
 				}catch(SQLException e){
