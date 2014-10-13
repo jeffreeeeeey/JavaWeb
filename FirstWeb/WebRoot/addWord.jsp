@@ -36,6 +36,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
+  <div>
 	 <form action="operateWord.jsp" method = "post">
 	 	<input type="hidden" name="action" value="add">
 	 	<input type="hidden" name="id" value="<%=isEdit ? id : "" %>"> 
@@ -90,6 +91,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	 		
 	 	</fieldset>
 	 </form>   
-
+</div>
   </body>
 </html>
