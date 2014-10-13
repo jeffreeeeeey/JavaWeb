@@ -45,18 +45,40 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	 				isEdit ? "Edit Word" : "Add New Word"
 	 			%>
 	 			<br></legend>
-	 		<table width="317" border="1">
+	 		<table width="492" border="1">
       <tr>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
+        <td width="49">&nbsp;</td>
+        <td width="219">&nbsp;</td>
+        <td width="202">&nbsp;</td>
       </tr>
       <tr>
-        <td height="50">&nbsp;</td>
-        <td><label for="1">Word</label>
+        <td height="50"><label for="1">Word</label></td>
+        <td>
         <input type="text" name="name" id="1" /></td>
         <td>&nbsp;</td>
       </tr>
+      <tr>
+        <td height="50"><label for="1">IPA</label></td>
+        <td>
+        <label>E </label> <input type="text" name="IPA_E" id="1" /></td>
+        <td>
+        <label>A </label><input type="text" name="IPA_A" id="1" /></td>
+      </tr>
+      
+      <tr>
+        <td height="50"><label for="1">Meaning</label></td>
+        <td>
+        <textarea name="meaning" id="meaning_textarea" cols="30" rows="3"></textarea></td>
+        <td>&nbsp;
+        </td>
+      </tr>
+      <tr>
+        <td height="50"><label for="1">Sample</label></td>
+        <td>
+        <textarea name="sample" id="sample_textarea" cols="30" rows="3"></textarea></td>
+        <td>&nbsp;</td>
+      </tr>
+
       <tr>
         <td>&nbsp;</td>
         <td><input type="submit" name="button" id="button" value="<%= isEdit? "Save" : "Add" %>" /></td>

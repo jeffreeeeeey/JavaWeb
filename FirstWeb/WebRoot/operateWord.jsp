@@ -8,6 +8,8 @@
 %>
 <%
 	String name = request.getParameter("name");
+	String meaning = request.getParameter("meaning");
+	String sample = request.getParameter("sample");
 	String action = request.getParameter("action");
 	String sql = null;
 	
@@ -17,7 +19,7 @@
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet resultSet = null;
-		int n = 0;
+		int word_id = 0, meaning_id = 0, sample_id = 0;
 		String aString = "good";
 		
 		int result = 0;
@@ -25,15 +27,31 @@
 			Class.forName("com.mysql.jdbc.Driver"); 
 			connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
 			statement = connection.createStatement();
+			
+			//add word in table, get the id
 			result = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 			resultSet = statement.getGeneratedKeys();
 			resultSet.next();
-			n = resultSet.getInt(1);
+			word_id = resultSet.getInt(1);
+			
+			//add meaning in table, get the id
+			sql = "INSERT INTO words_meanings (word_id, meaning) value " + "('" + word_id +"', '" + meaning + "')";
+			statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			resultSet = statement.getGeneratedKeys();
+			resultSet.next();
+			meaning_id = resultSet.getInt(1);
+			
+			//add sample in table, get the id
+			sql = "INSERT INTO meaning_samples (meaning_id, sample) value " + "('" + meaning_id +"', '" + sample + "')";
+			statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			resultSet = statement.getGeneratedKeys();
+			resultSet.next();
+			sample_id = resultSet.getInt(1);
 			
 			out.println("<html> <body>");
 			out.println("executing: "+sql +"</br>");
-			out.println("add " + result + "words, </br>" + aString);
-			out.println("word id:" + n);
+			out.println("add " + result + "words, </br>");
+			out.println("word id:" + word_id + "</br>" + "meaning id:" + meaning_id + "</br>" + "sample id:" + sample_id + "</br>");
 			out.println("</body></html>");
 			
 			if(resultSet != null)
