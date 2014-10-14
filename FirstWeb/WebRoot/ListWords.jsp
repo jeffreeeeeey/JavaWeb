@@ -33,7 +33,7 @@
 					int id = resultSet.getInt("id");
 					String name = resultSet.getString("name"); 
 					
-					out.println("<a href = \"WordDetails.jsp?id=" + id +"\">" + name + "</a>");
+					out.println("<a href = \"WordDetails.jsp?word_id=" + id +"\">" + name + "</a>");
 					out.println("</br>"); 
 					} 
 				}catch(SQLException e){

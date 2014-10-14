@@ -6,7 +6,7 @@
 <html>
 <%
 	String id_string = request.getParameter("word_id");
-	int word_id = 22;
+	int word_id = Integer.parseInt(id_string);
  %>
 
 <head>
@@ -24,12 +24,20 @@
 		resultSet = statement.executeQuery("SELECT * FROM words WHERE id = " + word_id);
 		resultSet.next();
 		String name = resultSet.getString("name");
+		
+		//get meaning
 		resultSet = statement.executeQuery("SELECT * FROM words_meanings WHERE word_id = " + word_id);
 		resultSet.next();
+		int meaning_id = resultSet.getInt("id");
 		String meaning = resultSet.getString("meaning");
 		
-		out.print(name + "</br>" + meaning);
-		out.print("good");
+		//get sample by meaning id
+		resultSet = statement.executeQuery("SELECT * FROM meaning_samples WHERE meaning_id = " + meaning_id);
+		resultSet.next();
+		String sample = resultSet.getString("sample");
+		
+		out.println("id:" + id_string + "</br>");
+		out.print(name + "</br>" + meaning + "</br>" + sample );
 	
 		connection.close();
 		statement.close();
