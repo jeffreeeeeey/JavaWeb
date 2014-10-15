@@ -7,20 +7,19 @@
 	}
 %>
 <%
-	String name = request.getParameter("name");
-	String meaning = request.getParameter("meaning");
-	String sample = request.getParameter("sample");
 	String action = request.getParameter("action");
-	String sql = null;
 	
 	
 	if("add".equals(action)){
-		sql = "INSERT INTO words " + "(name) value " + "('" + name + "')";
+		String name = request.getParameter("name");
+		String meaning = request.getParameter("meaning");
+		String sample = request.getParameter("sample");
+		
+		String sql = "INSERT INTO words " + "(name) value " + "('" + name + "')";
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet resultSet = null;
 		int word_id = 0, meaning_id = 0, sample_id = 0;
-		String aString = "good";
 		
 		int result = 0;
 		
@@ -61,10 +60,27 @@
 			if(connection != null) 
 				connection.close(); 
 	}else if("del".equals(action)){
+		String word_id = request.getParameter("word_id");
+		if(word_id == null){
+			out.println("no word is selected");
+			return;
+		}
+		String sql = "DELETE FROM words where id = " + word_id;
+		
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		
+		Class.forName("com.mysql.jdbc.Driver"); 
+		connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+		statement = connection.createStatement();
+		resultSet = statement.executeQuery("SELECT * FROM words_meanings WHERE word_id = " + word_id);
+		
+		
 		
 	}else if("edit".equals(action)){
 		String id = request.getParameter("id");
-		sql = "SELECT * FORM words WHERE id = " + id;
+		String sql = "SELECT * FORM words WHERE id = " + id;
 		
 	}
 	out.println("</br>end of page");
