@@ -1,3 +1,4 @@
+<%@page import="java.util.Dictionary"%>
 <%@page import="java.sql.SQLException"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
@@ -15,8 +16,11 @@
 </head>
 <body>
 <%
-	Connection connection = null; Statement statement = null;
+	Connection connection = null; 
+	Statement statement = null;
 	ResultSet resultSet = null; 
+	ResultSet resultSet_meaning = null;
+	ResultSet resultSet_sample = null;
 	
 		Class.forName("com.mysql.jdbc.Driver"); 
 		connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
@@ -24,25 +28,32 @@
 		resultSet = statement.executeQuery("SELECT * FROM words WHERE id = " + word_id);
 		resultSet.next();
 		String name = resultSet.getString("name");
+		out.print(name + "    <a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a> </br>");
 		
-		//get meaning
-		resultSet = statement.executeQuery("SELECT * FROM words_meanings WHERE word_id = " + word_id);
-		resultSet.next();
-		int meaning_id = resultSet.getInt("id");
-		String meaning = resultSet.getString("meaning");
+		//get meanings
+		resultSet_meaning = statement.executeQuery("SELECT * FROM words_meanings WHERE word_id = " + word_id);
+		Dictionary meaningDictionary = 
+		while(resultSet_meaning.next()){
+			int meaning_id = resultSet_meaning.getInt("id");
+			String meaning = resultSet_meaning.getString("meaning");
+			out.println(meaning + "    <a href=\"\">add sample</a> </br>");
+			
+			//get sample by meaning id
+			/*
+			resultSet_sample = statement.executeQuery("SELECT * FROM meaning_samples WHERE meaning_id = " + meaning_id);
+			resultSet_sample.next();
+			String sample = resultSet_sample.getString("sample");
+			out.println(sample + "</br>");
+			*/
+		}
 		
-		//get sample by meaning id
-		resultSet = statement.executeQuery("SELECT * FROM meaning_samples WHERE meaning_id = " + meaning_id);
-		resultSet.next();
-		String sample = resultSet.getString("sample");
-		
-		out.println("id:" + id_string + "</br>");
-		out.print(name + "</br>" + meaning + "</br>" + sample );
+		//out.println("id:" + id_string + "</br>");
 	
 		connection.close();
 		statement.close();
 		resultSet.close();
-	
+		//resultSet_sample.close();
+		resultSet_meaning.close();
  %>
 
 
