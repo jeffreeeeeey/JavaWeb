@@ -5,12 +5,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
 <%
-	String id_string = request.getParameter("word_id");
-	int word_id = Integer.parseInt(id_string);
+	String id_string = request.getParameter("meaning_id");
+	int meaning_id = Integer.parseInt(id_string);
  %>
 
+<title>Insert title here</title>
 </head>
 <body>
 <%
@@ -21,17 +21,17 @@
 	Class.forName("com.mysql.jdbc.Driver"); 
 	connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
 	statement = connection.createStatement();
-	resultSet = statement.executeQuery("SELECT * FROM words WHERE id = " + word_id);
+	resultSet = statement.executeQuery("SELECT * FROM words_meanings WHERE id = " + meaning_id);
 	resultSet.next();
-	String name = resultSet.getString("name");
-	out.println("word:" + name + "</br>");
+	String meaning = resultSet.getString("meaning");
+	out.println("meaning:" + meaning + "</br>");
  %>
- 
- <form action="operateWord.jsp" method = "post">
- 	<input type="hidden" name="action" value="addMeaning">
- 	<input type="hidden" name="word_id" value=<%=word_id %>>
- 	<textarea name="meaning" id="meaning_textarea" cols="30" rows="3"></textarea>
+  <form action="operateWord.jsp" method = "post">
+ 	<input type="hidden" name="action" value="addSample">
+ 	<input type="hidden" name="meaning_id" value=<%=meaning_id %>>
+ 	<textarea name="sample" id="sample_textarea" cols="30" rows="3"></textarea>
  	<input type="submit" name="button" id="button" value="Save" />
  </form>
+	
 </body>
 </html>

@@ -103,6 +103,27 @@
 		resultSet.next();
 		meaning_id = resultSet.getInt(1);
 		out.println("meaning added, id:" + meaning_id + "</br>");
+	}else if("addSample".equals(action)){
+		String meaning_idString = request.getParameter("meaning_id");
+		
+		int meaning_id = Integer.parseInt(meaning_idString);
+		String sample = request.getParameter("sample");
+		int sample_id = 0;
+		
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		String sql = "INSERT INTO meaning_samples (meaning_id, sample) VALUE ('" + meaning_id + "', '" + sample + "')";
+		
+		Class.forName("com.mysql.jdbc.Driver"); 
+		connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+		statement = connection.createStatement();
+		
+		statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+		resultSet = statement.getGeneratedKeys();
+		resultSet.next();
+		sample_id = resultSet.getInt(1);
+		out.println("meaning added, id:" + sample_id + "</br>");
 	}
 	out.println("</br>end of page");
  %>
