@@ -3,9 +3,12 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.sql.*" %>
+
+
 <jsp:directive.page import="java.sql.Date" />
 <jsp:directive.page import="java.sql.Timestamp" />
 <jsp:directive.page import="java.sql.SQLException" />
+
 
 
 
@@ -25,8 +28,10 @@
 			Connection connection = null; Statement statement = null;
 			ResultSet resultSet = null; 
 			try{
-				Class.forName("com.mysql.jdbc.Driver"); 
-				connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+				//Class.forName("com.mysql.jdbc.Driver"); 
+				//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+				Class.forName("org.sqlite.JDBC");
+				connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
 				statement = connection.createStatement();
 				resultSet = statement.executeQuery("select * from words");
 				while(resultSet.next()){ 

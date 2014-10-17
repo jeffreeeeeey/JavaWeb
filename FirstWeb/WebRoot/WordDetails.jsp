@@ -1,6 +1,7 @@
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.Dictionary"%>
 <%@ page import="java.sql.SQLException"%>
+
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ page import = "java.sql.*" %>
@@ -31,7 +32,10 @@
 	resultSet = statement.executeQuery("SELECT * FROM words WHERE id = " + word_id);
 	resultSet.next();
 	String name = resultSet.getString("name");
-	out.print(name + "    <a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a> </br>");
+	String IPA_E = resultSet.getString("IPA_E");
+	String IPA_A = resultSet.getString("IPA_A");
+	out.print("<strong>" + name + "</strong>" + "    <a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a> </br>");
+	out.println("IPA: /" + IPA_E + "/  /" + IPA_A + "/</br>");
 	
 	//get meanings
 	resultSet_meaning = statement.executeQuery("SELECT * FROM words_meanings WHERE word_id = " + word_id);
@@ -58,7 +62,7 @@
 		WordMeaning wordMeaning = meanings.get(i);
 		int meaning_id = wordMeaning.id;
 		String meaning = wordMeaning.meaning;
-		out.println(meaning + "    <a href=\"addSample.jsp?meaning_id=" + meaning_id + "\">add sample</a> </br>");
+		out.println("* " + meaning + "    <a href=\"addSample.jsp?meaning_id=" + meaning_id + "\">add sample</a> </br>");
 		
 		//get sample of this meaning
 		wordMeaning.samplesArrayList = new ArrayList<MeaningSample>();
@@ -78,11 +82,11 @@
 		if(n >= 1){
 			for(int j = 0; j < n; j++ ){
 				MeaningSample meaningSample = wordMeaning.samplesArrayList.get(j);
-				out.println(meaningSample.sample + "</br>");
+				out.println("<em>" + meaningSample.sample + "</em></br>");
 			}
 		}
 	}
-	out.println("</br>size:" + meanings.size());
+	//out.println("</br>size:" + meanings.size());
 	
 	//out.println("id:" + id_string + "</br>");
 

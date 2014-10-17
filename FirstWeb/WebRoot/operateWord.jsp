@@ -12,10 +12,12 @@
 	
 	if("add".equals(action)){
 		String name = request.getParameter("name");
+		String IPA_E = request.getParameter("IPA_E");
+		String IPA_A = request.getParameter("IPA_A");
 		String meaning = request.getParameter("meaning");
 		String sample = request.getParameter("sample");
 		
-		String sql = "INSERT INTO words " + "(name) value " + "('" + name + "')";
+		String sql = "INSERT INTO words " + "(name, IPA_E, IPA_A) value " + "('" + name +"','" + IPA_E + "', '" + IPA_A +"')";
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet resultSet = null;
