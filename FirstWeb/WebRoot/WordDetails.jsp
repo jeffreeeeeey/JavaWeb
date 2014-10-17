@@ -9,13 +9,12 @@
 <%@ page import = "com.selfedu.MeaningSample" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <%
 	String id_string = request.getParameter("word_id");
 	int word_id = Integer.parseInt(id_string);
  %>
-
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
 </head>
 <body>
@@ -26,17 +25,24 @@
 	ResultSet resultSet_meaning = null;
 	ResultSet resultSet_sample = null;
 	
-	Class.forName("com.mysql.jdbc.Driver"); 
-	connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
-	statement = connection.createStatement();
-	resultSet = statement.executeQuery("SELECT * FROM words WHERE id = " + word_id);
-	resultSet.next();
-	String name = resultSet.getString("name");
-	String IPA_E = resultSet.getString("IPA_E");
-	String IPA_A = resultSet.getString("IPA_A");
-	out.print("<strong>" + name + "</strong>" + "    <a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a> </br>");
-	out.println("IPA: /" + IPA_E + "/  /" + IPA_A + "/</br>");
-	
+	try{
+		//Class.forName("com.mysql.jdbc.Driver"); 
+		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+		
+		Class.forName("org.sqlite.JDBC");
+		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
+		
+		statement = connection.createStatement();
+		resultSet = statement.executeQuery("SELECT * FROM words WHERE id = '" + word_id +"';");
+		resultSet.next();
+		String name = resultSet.getString("name");
+		String IPA_E = resultSet.getString("IPA_E");
+		String IPA_A = resultSet.getString("IPA_A");
+		out.print("<strong>" + name + "</strong>" + "    <a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a> </br>");
+		out.println("IPA: /" + IPA_E + "/  /" + IPA_A + "/</br>");
+	}catch(SQLException e){
+		e.printStackTrace();
+	}
 	//get meanings
 	resultSet_meaning = statement.executeQuery("SELECT * FROM words_meanings WHERE word_id = " + word_id);
 	ArrayList<WordMeaning> meanings = new ArrayList<WordMeaning>();
@@ -90,11 +96,17 @@
 	
 	//out.println("id:" + id_string + "</br>");
 
+	if(statement != null)
+		statement.close();
+	if(resultSet != null)
+		resultSet.close();
+	if(resultSet_sample != null)
+		resultSet_sample.close();
+	if(resultSet_meaning != null)
+		resultSet_meaning.close();
+	if(connection != null)
 	connection.close();
-	statement.close();
-	resultSet.close();
-	resultSet_sample.close();
-	resultSet_meaning.close();
+	
  %>
 
 

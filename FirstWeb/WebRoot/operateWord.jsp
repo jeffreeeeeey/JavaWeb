@@ -25,8 +25,10 @@
 		
 		int result = 0;
 		
-			Class.forName("com.mysql.jdbc.Driver"); 
-			connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+			//Class.forName("com.mysql.jdbc.Driver"); 
+			//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+			Class.forName("org.sqlite.JDBC");
+			connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
 			statement = connection.createStatement();
 			
 			//add word in table, get the id
@@ -73,8 +75,11 @@
 		Statement statement = null;
 		ResultSet resultSet = null;
 		
-		Class.forName("com.mysql.jdbc.Driver"); 
-		connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+		//Class.forName("com.mysql.jdbc.Driver"); 
+		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+		Class.forName("org.sqlite.JDBC");
+		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
+		
 		statement = connection.createStatement();
 		resultSet = statement.executeQuery("SELECT * FROM words_meanings WHERE word_id = " + word_id);
 		
@@ -96,8 +101,10 @@
 		ResultSet resultSet = null;
 		String sql = "INSERT INTO words_meanings (word_id, meaning) VALUE ('" + word_id + "', '" + meaning + "')";
 		
-		Class.forName("com.mysql.jdbc.Driver"); 
-		connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+		//Class.forName("com.mysql.jdbc.Driver"); 
+		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+		Class.forName("org.sqlite.JDBC");
+		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
 		statement = connection.createStatement();
 		
 		statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
@@ -105,6 +112,13 @@
 		resultSet.next();
 		meaning_id = resultSet.getInt(1);
 		out.println("meaning added, id:" + meaning_id + "</br>");
+		
+		if(resultSet != null)
+				resultSet.close(); 
+		if(statement != null) 
+			statement.close();
+		if(connection != null) 
+			connection.close(); 
 	}else if("addSample".equals(action)){
 		String meaning_idString = request.getParameter("meaning_id");
 		
@@ -117,8 +131,11 @@
 		ResultSet resultSet = null;
 		String sql = "INSERT INTO meaning_samples (meaning_id, sample) VALUE ('" + meaning_id + "', '" + sample + "')";
 		
-		Class.forName("com.mysql.jdbc.Driver"); 
-		connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+		//Class.forName("com.mysql.jdbc.Driver"); 
+		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+		Class.forName("org.sqlite.JDBC");
+		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
+		
 		statement = connection.createStatement();
 		
 		statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
@@ -126,6 +143,13 @@
 		resultSet.next();
 		sample_id = resultSet.getInt(1);
 		out.println("meaning added, id:" + sample_id + "</br>");
+		
+		if(resultSet != null)
+				resultSet.close(); 
+		if(statement != null) 
+			statement.close();
+		if(connection != null) 
+			connection.close(); 
 	}
 	out.println("</br>end of page");
  %>

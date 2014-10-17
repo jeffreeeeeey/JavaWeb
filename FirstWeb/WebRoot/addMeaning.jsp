@@ -18,13 +18,22 @@
 	Statement statement = null;
 	ResultSet resultSet = null; 
 	
-	Class.forName("com.mysql.jdbc.Driver"); 
-	connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+	//Class.forName("com.mysql.jdbc.Driver"); 
+	//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+	Class.forName("org.sqlite.JDBC");
+	connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
 	statement = connection.createStatement();
 	resultSet = statement.executeQuery("SELECT * FROM words WHERE id = " + word_id);
 	resultSet.next();
 	String name = resultSet.getString("name");
 	out.println("word:" + name + "</br>");
+	
+	if(resultSet != null)
+		resultSet.close(); 
+	if(statement != null) 
+		statement.close();
+	if(connection != null) 
+		connection.close(); 
  %>
  
  <form action="operateWord.jsp" method = "post">
