@@ -4,13 +4,9 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.sql.*" %>
 
-
 <jsp:directive.page import="java.sql.Date" />
 <jsp:directive.page import="java.sql.Timestamp" />
 <jsp:directive.page import="java.sql.SQLException" />
-
-
-
 
 <html>
 <head>
@@ -43,14 +39,13 @@
 					} 
 				}catch(SQLException e){
 					e.printStackTrace(); 
-				}finally{ 
+				}
 					if(resultSet != null)
 						resultSet.close(); 
 					if(statement != null) 
 						statement.close();
 					if(connection != null) 
 						connection.close(); 
-				}
 		%>
 	</body>
 </html>

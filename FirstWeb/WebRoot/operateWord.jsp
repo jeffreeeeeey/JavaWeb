@@ -17,7 +17,7 @@
 		String meaning = request.getParameter("meaning");
 		String sample = request.getParameter("sample");
 		
-		String sql = "INSERT INTO words " + "(name, IPA_E, IPA_A) value " + "('" + name +"','" + IPA_E + "', '" + IPA_A +"')";
+		
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet resultSet = null;
@@ -25,44 +25,54 @@
 		
 		int result = 0;
 		
-			//Class.forName("com.mysql.jdbc.Driver"); 
-			//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
-			Class.forName("org.sqlite.JDBC");
-			connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
-			statement = connection.createStatement();
-			
-			//add word in table, get the id
-			result = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-			resultSet = statement.getGeneratedKeys();
+		//Class.forName("com.mysql.jdbc.Driver"); 
+		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+		Class.forName("org.sqlite.JDBC");
+		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
+		statement = connection.createStatement();
+		
+		//add word in table, get the id
+		String sql = "INSERT INTO words " + "(name, IPA_E, IPA_A) values " + "('" + name +"','" + IPA_E + "', '" + IPA_A +"')";
+		//result = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+		//resultSet = statement.getGeneratedKeys();
+		result = statement.executeUpdate(sql);
+		//get id
+		sql = "SELECT * FROM words ORDER BY id DESC LIMIT 1";
+		resultSet = statement.executeQuery(sql);
+		resultSet.next();
+		word_id = resultSet.getInt("id");
+		
+		//add meaning in table, get the id
+		if(meaning.length() != 0){
+			sql = "INSERT INTO words_meanings (word_id, meaning) values " + "('" + word_id +"', '" + meaning + "')";
+			statement.executeUpdate(sql);
+			sql = "SELECT * FROM words_meanings ORDER BY id DESC LIMIT 1";
+			resultSet = statement.executeQuery(sql);
 			resultSet.next();
-			word_id = resultSet.getInt(1);
-			
-			//add meaning in table, get the id
-			sql = "INSERT INTO words_meanings (word_id, meaning) value " + "('" + word_id +"', '" + meaning + "')";
-			statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-			resultSet = statement.getGeneratedKeys();
-			resultSet.next();
-			meaning_id = resultSet.getInt(1);
-			
-			//add sample in table, get the id
+			meaning_id = resultSet.getInt("id");
+		}
+		
+		//add sample in table, get the id
+		if(sample.length() != 0){
 			sql = "INSERT INTO meaning_samples (meaning_id, sample) value " + "('" + meaning_id +"', '" + sample + "')";
-			statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-			resultSet = statement.getGeneratedKeys();
+			statement.executeUpdate(sql);
+			sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
+			resultSet = statement.executeQuery(sql);
 			resultSet.next();
-			sample_id = resultSet.getInt(1);
-			
-			out.println("<html> <body>");
-			out.println("executing: "+sql +"</br>");
-			out.println("add " + result + "words, </br>");
-			out.println("word id:" + word_id + "</br>" + "meaning id:" + meaning_id + "</br>" + "sample id:" + sample_id + "</br>");
-			out.println("</body></html>");
-			
-			if(resultSet != null)
-				resultSet.close(); 
-			if(statement != null) 
-				statement.close();
-			if(connection != null) 
-				connection.close(); 
+			sample_id = resultSet.getInt("id");
+		}
+		out.println("<html> <body>");
+		out.println("executing: "+sql +"</br>");
+		out.println("add " + result + "words, </br>");
+		out.println("word id:" + word_id + "</br>" + "meaning id:" + meaning_id + "</br>" + "sample id:" + sample_id + "</br>");
+		out.println("</body></html>");
+		
+		if(resultSet != null)
+			resultSet.close(); 
+		if(statement != null) 
+			statement.close();
+		if(connection != null) 
+			connection.close(); 
 	}else if("del".equals(action)){
 		String word_id = request.getParameter("word_id");
 		if(word_id == null){
@@ -99,7 +109,7 @@
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet resultSet = null;
-		String sql = "INSERT INTO words_meanings (word_id, meaning) VALUE ('" + word_id + "', '" + meaning + "')";
+		String sql = "INSERT INTO words_meanings (word_id, meaning) VALUES ('" + word_id + "', '" + meaning + "')";
 		
 		//Class.forName("com.mysql.jdbc.Driver"); 
 		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
@@ -107,47 +117,56 @@
 		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
 		statement = connection.createStatement();
 		
-		statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-		resultSet = statement.getGeneratedKeys();
+		//statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+		//resultSet = statement.getGeneratedKeys();
+		statement.executeUpdate(sql);
+		sql = "SELECT * FROM words_meanings ORDER BY id desc LIMIT 1";
+		resultSet = statement.executeQuery(sql);
 		resultSet.next();
-		meaning_id = resultSet.getInt(1);
+		meaning_id = resultSet.getInt("id");
 		out.println("meaning added, id:" + meaning_id + "</br>");
 		
 		if(resultSet != null)
-				resultSet.close(); 
+			resultSet.close(); 
 		if(statement != null) 
 			statement.close();
 		if(connection != null) 
 			connection.close(); 
 	}else if("addSample".equals(action)){
 		String meaning_idString = request.getParameter("meaning_id");
-		
 		int meaning_id = Integer.parseInt(meaning_idString);
 		String sample = request.getParameter("sample");
 		int sample_id = 0;
 		
 		Connection connection = null;
-		Statement statement = null;
+		Statement statement1 = null;
 		ResultSet resultSet = null;
-		String sql = "INSERT INTO meaning_samples (meaning_id, sample) VALUE ('" + meaning_id + "', '" + sample + "')";
+		String sql = "INSERT INTO meaning_samples (meaning_id, sample) VALUES ('" + meaning_id + "', '" + sample + "')";
 		
 		//Class.forName("com.mysql.jdbc.Driver"); 
 		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
 		Class.forName("org.sqlite.JDBC");
 		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
+		statement1 = connection.createStatement();
 		
-		statement = connection.createStatement();
+		//statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+		//resultSet = statement.getGeneratedKeys();
 		
-		statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-		resultSet = statement.getGeneratedKeys();
-		resultSet.next();
-		sample_id = resultSet.getInt(1);
-		out.println("meaning added, id:" + sample_id + "</br>");
-		
+		statement1.executeUpdate(sql);
+		//statement.close();
+		//statement = connection.createStatement();
+		sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
+		statement1.executeQuery(sql);
+		if(resultSet.next()){
+			sample_id = resultSet.getInt("id");
+			out.println("meaning added, id:" + sample_id + "</br>");
+		}else{
+			out.print("not added");
+		}
 		if(resultSet != null)
 				resultSet.close(); 
-		if(statement != null) 
-			statement.close();
+		if(statement1 != null) 
+			statement1.close();
 		if(connection != null) 
 			connection.close(); 
 	}
