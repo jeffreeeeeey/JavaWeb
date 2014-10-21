@@ -33,9 +33,9 @@
 				while(resultSet.next()){ 
 					int id = resultSet.getInt("id");
 					String name = resultSet.getString("name"); 
-					
+				
 					out.println("<a href = \"WordDetails.jsp?word_id=" + id +"\">" + name + "</a>");
-					out.println("</br>"); 
+					out.println("    <a href =\"operateWord.jsp?action=del&word_id=" + id + "\">delete </a></br>"); 
 					} 
 				}catch(SQLException e){
 					e.printStackTrace(); 

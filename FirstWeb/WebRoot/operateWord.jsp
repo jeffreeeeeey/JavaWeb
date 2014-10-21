@@ -1,4 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<%@page import="sample.SampleScenario"%>
 <%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
 <%@ page import = "java.sql.*" %>
 <%! 
@@ -8,7 +9,6 @@
 %>
 <%
 	String action = request.getParameter("action");
-	
 	
 	if("add".equals(action)){
 		String name = request.getParameter("name");
@@ -82,10 +82,7 @@
 	//end of add
 	}else if("del".equals(action)){
 		String word_id = request.getParameter("word_id");
-		if(word_id == null){
-			out.println("no word is selected");
-			return;
-		}
+
 		String sql = "DELETE FROM words where id = " + word_id;
 		
 		Connection connection = null;
@@ -96,12 +93,51 @@
 		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
 		Class.forName("org.sqlite.JDBC");
 		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
-		
 		statement = connection.createStatement();
+		//delete word
+		//statement.executeUpdate(sql);
+		//get the meaning id
+		ArrayList<Integer> meaningIDs = new ArrayList<Integer>();
 		resultSet = statement.executeQuery("SELECT * FROM words_meanings WHERE word_id = " + word_id);
+		while(resultSet.next()){
+			int meaning_id = resultSet.getInt("id");
+			meaningIDs.add(meaning_id);
+		}
+		if(meaningIDs.size() > 0){
+			ArrayList<Integer> sampleIDs = new ArrayList<Integer>();
+			for(int i = 0; i < meaningIDs.size(); i++){
+				sql = "SELECT * FROM meaning_samples WHERE meaning_id = " + meaningIDs.get(i);
+				resultSet = statement.executeQuery(sql);
+				while(resultSet.next()){
+					int sample_id = resultSet.getInt("id");
+					sampleIDs.add(sample_id);
+				}
+			}
+			if(sampleIDs.size()>0){
+				out.println("delete samples:");
+				for(int i = 0; i < sampleIDs.size(); i++){
+					out.println(sampleIDs.get(i) + ", ");
+					//sql = "DELETE FROM meaning_samples WHERE id = " + sampleIDs.get(i);
+					//statement.executeUpdate(sql);
+				}
+				out.println("</br>");
+			}
+			//delete meanings
+			out.println("delete meanings:");
+			for(int i = 0; i < meaningIDs.size(); i++){
+				out.println(meaningIDs.get(i) + ", ");
+				//sql = "DELETE FROM words_samples WHERE id = " + meaningIDs.get(i);
+			}
+			out.println("</br>");
+		}
 		
-		
-		
+		if(resultSet != null)
+			resultSet.close(); 
+		if(statement != null) 
+			statement.close();
+		if(connection != null) 
+			connection.close(); 
+	//end of del	
 	}else if("edit".equals(action)){
 		String id = request.getParameter("id");
 		String sql = "SELECT * FORM words WHERE id = " + id;
