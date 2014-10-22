@@ -1,12 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<%@page import="sample.SampleScenario"%>
+<%@page import="java.security.interfaces.RSAKey"%>
 <%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
 <%@ page import = "java.sql.*" %>
-<%! 
-	public String forSQL(String sql) {
-		return sql.replace("'", "\\'");
-	}
-%>
+
 <%
 	String action = request.getParameter("action");
 	
@@ -81,7 +77,8 @@
 			connection.close(); 
 	//end of add
 	}else if("del".equals(action)){
-		String word_id = request.getParameter("word_id");
+		String word_idString = request.getParameter("word_id");
+		int word_id = Integer.parseInt(word_idString);
 
 		String sql = "DELETE FROM words where id = " + word_id;
 		
@@ -95,7 +92,7 @@
 		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
 		statement = connection.createStatement();
 		//delete word
-		//statement.executeUpdate(sql);
+		statement.executeUpdate(sql);
 		//get the meaning id
 		ArrayList<Integer> meaningIDs = new ArrayList<Integer>();
 		resultSet = statement.executeQuery("SELECT * FROM words_meanings WHERE word_id = " + word_id);
@@ -104,6 +101,7 @@
 			meaningIDs.add(meaning_id);
 		}
 		if(meaningIDs.size() > 0){
+			
 			ArrayList<Integer> sampleIDs = new ArrayList<Integer>();
 			for(int i = 0; i < meaningIDs.size(); i++){
 				sql = "SELECT * FROM meaning_samples WHERE meaning_id = " + meaningIDs.get(i);
@@ -117,16 +115,18 @@
 				out.println("delete samples:");
 				for(int i = 0; i < sampleIDs.size(); i++){
 					out.println(sampleIDs.get(i) + ", ");
-					//sql = "DELETE FROM meaning_samples WHERE id = " + sampleIDs.get(i);
-					//statement.executeUpdate(sql);
+					sql = "DELETE FROM meaning_samples WHERE id = " + sampleIDs.get(i);
+					statement.executeUpdate(sql);
 				}
 				out.println("</br>");
 			}
+			
 			//delete meanings
 			out.println("delete meanings:");
 			for(int i = 0; i < meaningIDs.size(); i++){
 				out.println(meaningIDs.get(i) + ", ");
-				//sql = "DELETE FROM words_samples WHERE id = " + meaningIDs.get(i);
+				sql = "DELETE FROM words_meanings WHERE id = " + meaningIDs.get(i);
+				statement.executeUpdate(sql);
 			}
 			out.println("</br>");
 		}
@@ -139,8 +139,32 @@
 			connection.close(); 
 	//end of del	
 	}else if("edit".equals(action)){
-		String id = request.getParameter("id");
-		String sql = "SELECT * FORM words WHERE id = " + id;
+		String word_id = request.getParameter("word_id");
+		String sql = "SELECT * FROM words WHERE id = " + word_id;
+		
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet_word = null;
+		ResultSet resultSet_meaning = null;
+		ResultSet resultSet_sample = null;
+		Class.forName("org.sqlite.JDBC");
+		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
+		statement = connection.createStatement();
+		resultSet_word = statement.executeQuery(sql);
+		sql = "SELECT * FROM words_meanings WHERE word_id = " + word_id;
+		resultSet_meaning = statement.executeQuery(sql);
+		
+		if(resultSet_word.next()){
+			request.setAttribute("word_id", word_id);
+			//request.setAttribute("IPA_E", resultSet_word.getString("IPA_E"));
+			//request.setAttribute("IPA_A", resultSet_word.getString("IPA_A"));
+			//request.setAttribute("meaning", resultSet.getString("meaning"));
+			//request.setAttribute("sample", resultSet.getString("sample"));
+			
+			request.setAttribute("action", action);
+			//forward to edit
+			request.getRequestDispatcher("/addWord.jsp").forward(request, response);
+		}
 		
 	}else if("addMeaning".equals(action)){
 		String word_idString = request.getParameter("word_id");

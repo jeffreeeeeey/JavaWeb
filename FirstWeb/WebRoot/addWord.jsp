@@ -6,10 +6,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%
-	//String action = (String)request.getAttribute("action");
-	String action = "add";
-	String id = (String)request.getAttribute("id");
+	String action = (String)request.getAttribute("action");
+	
+	String id = (String)request.getAttribute("word_id");
 	String name = (String)request.getAttribute("name");
+	String IPA_E = (String)request.getAttribute("PLA_E");
+	String IPA_A = (String)request.getAttribute("PLA_A");
+	String meaning = (String)request.getAttribute("meaning");
+	String sample = (String)request.getAttribute("sample");
 	
 	boolean isEdit = "edit".equals(action);
  %>
@@ -22,7 +26,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
     <base href="<%=basePath%>">
     
-    <title>My JSP 'addWord.jsp' starting page</title>
+    <title><%= isEdit ? "Edit Word" : "Add Word" %></title>
     
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
@@ -38,7 +42,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <body>
   <div>
 	 <form action="operateWord.jsp" method = "post">
-	 	<input type="hidden" name="action" value="add">
+	 	<input type="hidden" name="action" value=<%= isEdit?"save":"add" %>>
 	 	<input type="hidden" name="id" value="<%=isEdit ? id : "" %>"> 
 	 	<fieldset>
 	 		<legend>
@@ -55,28 +59,28 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       <tr>
         <td height="50"><label for="1">Word</label></td>
         <td>
-        <input type="text" name="name" id="1" /></td>
+        <input type="text" name="name" id="1" value="<%= isEdit?name:""%>"/></td>
         <td>&nbsp;</td>
       </tr>
       <tr>
         <td height="50"><label for="1">IPA</label></td>
         <td>
-        <label>E </label> <input type="text" name="IPA_E" id="1" /></td>
+        <label>E </label> <input type="text" name="IPA_E" id="1" value="<%= isEdit?IPA_E:""%>"/></td>
         <td>
-        <label>A </label><input type="text" name="IPA_A" id="1" /></td>
+        <label>A </label><input type="text" name="IPA_A" id="1" value="<%= isEdit?IPA_A:""%>"/></td>
       </tr>
       
       <tr>
         <td height="50"><label for="1">Meaning</label></td>
         <td>
-        <textarea name="meaning" id="meaning_textarea" cols="30" rows="3"></textarea></td>
+        <textarea name="meaning" id="meaning_textarea" cols="30" rows="3" value="<%= isEdit?meaning:""%>"></textarea></td>
         <td>&nbsp;
         </td>
       </tr>
       <tr>
         <td height="50"><label for="1">Sample</label></td>
         <td>
-        <textarea name="sample" id="sample_textarea" cols="30" rows="3"></textarea></td>
+        <textarea name="sample" id="sample_textarea" cols="30" rows="3" value="<%= isEdit?sample:""%>"></textarea></td>
         <td>&nbsp;</td>
       </tr>
 
