@@ -2,7 +2,7 @@
 <%@page import="java.security.interfaces.RSAKey"%>
 <%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
 <%@ page import = "java.sql.*" %>
-
+<%@ page import = "com.selfedu.ConnectDatabase" %>
 <%
 	String action = request.getParameter("action");
 	
@@ -21,31 +21,30 @@
 		
 		int result = 0;
 		
-		//Class.forName("com.mysql.jdbc.Driver"); 
-		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
-		Class.forName("org.sqlite.JDBC");
-		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
-		statement = connection.createStatement();
+		ConnectDatabase connectDatabase = new ConnectDatabase();
+		statement = connectDatabase.getStatement();
 		
 		//add word in table, get the id
 		if(name.length() != 0){
-			sql = "INSERT INTO words " + "(name, IPA_E, IPA_A) values " + "('" + name +"','" + IPA_E + "', '" + IPA_A +"')";
-			//result = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-			//resultSet = statement.getGeneratedKeys();
+			sql = "INSERT INTO words " + "(name) values " + "('" + name +"')";
 			result = statement.executeUpdate(sql);
 			
 			//get id
-			connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
-			statement = connection.createStatement();
 			sql = "SELECT * FROM words ORDER BY id DESC LIMIT 1";
 			resultSet = statement.executeQuery(sql);
 			resultSet.next();
 			word_id = resultSet.getInt("id");
-			
+	
 		}
+		//add IPAs
+		if(!(IPA_E.isEmpty()&&IPA_A.isEmpty())){
+			sql = "INSERT INTO IPAs (word_id, IPA_E, IPA_A) VALUES " + "('" + word_id + "','" + IPA_E + "','" + IPA_A +"')";
+			statement.executeUpdate(sql);
+		}
+		
 		//add meaning in table, get the id
 		if(!meaning.isEmpty()){
-			
+	
 			sql = "INSERT INTO words_meanings (word_id, meaning) values " + "('" + word_id +"', '" + meaning + "')";
 			statement.executeUpdate(sql);
 			sql = "SELECT * FROM words_meanings ORDER BY id DESC LIMIT 1";
@@ -97,46 +96,46 @@
 		ArrayList<Integer> meaningIDs = new ArrayList<Integer>();
 		resultSet = statement.executeQuery("SELECT * FROM words_meanings WHERE word_id = " + word_id);
 		while(resultSet.next()){
-			int meaning_id = resultSet.getInt("id");
-			meaningIDs.add(meaning_id);
+	int meaning_id = resultSet.getInt("id");
+	meaningIDs.add(meaning_id);
 		}
 		if(meaningIDs.size() > 0){
-			
-			ArrayList<Integer> sampleIDs = new ArrayList<Integer>();
-			for(int i = 0; i < meaningIDs.size(); i++){
-				sql = "SELECT * FROM meaning_samples WHERE meaning_id = " + meaningIDs.get(i);
-				resultSet = statement.executeQuery(sql);
-				while(resultSet.next()){
-					int sample_id = resultSet.getInt("id");
-					sampleIDs.add(sample_id);
-				}
-			}
-			if(sampleIDs.size()>0){
-				out.println("delete samples:");
-				for(int i = 0; i < sampleIDs.size(); i++){
-					out.println(sampleIDs.get(i) + ", ");
-					sql = "DELETE FROM meaning_samples WHERE id = " + sampleIDs.get(i);
-					statement.executeUpdate(sql);
-				}
-				out.println("</br>");
-			}
-			
-			//delete meanings
-			out.println("delete meanings:");
-			for(int i = 0; i < meaningIDs.size(); i++){
-				out.println(meaningIDs.get(i) + ", ");
-				sql = "DELETE FROM words_meanings WHERE id = " + meaningIDs.get(i);
-				statement.executeUpdate(sql);
-			}
-			out.println("</br>");
+	
+	ArrayList<Integer> sampleIDs = new ArrayList<Integer>();
+	for(int i = 0; i < meaningIDs.size(); i++){
+		sql = "SELECT * FROM meaning_samples WHERE meaning_id = " + meaningIDs.get(i);
+		resultSet = statement.executeQuery(sql);
+		while(resultSet.next()){
+			int sample_id = resultSet.getInt("id");
+			sampleIDs.add(sample_id);
+		}
+	}
+	if(sampleIDs.size()>0){
+		out.println("delete samples:");
+		for(int i = 0; i < sampleIDs.size(); i++){
+			out.println(sampleIDs.get(i) + ", ");
+			sql = "DELETE FROM meaning_samples WHERE id = " + sampleIDs.get(i);
+			statement.executeUpdate(sql);
+		}
+		out.println("</br>");
+	}
+	
+	//delete meanings
+	out.println("delete meanings:");
+	for(int i = 0; i < meaningIDs.size(); i++){
+		out.println(meaningIDs.get(i) + ", ");
+		sql = "DELETE FROM words_meanings WHERE id = " + meaningIDs.get(i);
+		statement.executeUpdate(sql);
+	}
+	out.println("</br>");
 		}
 		
 		if(resultSet != null)
-			resultSet.close(); 
+	resultSet.close(); 
 		if(statement != null) 
-			statement.close();
+	statement.close();
 		if(connection != null) 
-			connection.close(); 
+	connection.close(); 
 	//end of del	
 	}else if("edit".equals(action)){
 		String word_id = request.getParameter("word_id");
@@ -155,15 +154,15 @@
 		resultSet_meaning = statement.executeQuery(sql);
 		
 		if(resultSet_word.next()){
-			request.setAttribute("word_id", word_id);
-			//request.setAttribute("IPA_E", resultSet_word.getString("IPA_E"));
-			//request.setAttribute("IPA_A", resultSet_word.getString("IPA_A"));
-			//request.setAttribute("meaning", resultSet.getString("meaning"));
-			//request.setAttribute("sample", resultSet.getString("sample"));
-			
-			request.setAttribute("action", action);
-			//forward to edit
-			request.getRequestDispatcher("/addWord.jsp").forward(request, response);
+	request.setAttribute("word_id", word_id);
+	//request.setAttribute("IPA_E", resultSet_word.getString("IPA_E"));
+	//request.setAttribute("IPA_A", resultSet_word.getString("IPA_A"));
+	//request.setAttribute("meaning", resultSet.getString("meaning"));
+	//request.setAttribute("sample", resultSet.getString("sample"));
+	
+	request.setAttribute("action", action);
+	//forward to edit
+	request.getRequestDispatcher("/addWord.jsp").forward(request, response);
 		}
 		
 	}else if("addMeaning".equals(action)){
@@ -194,11 +193,11 @@
 		out.println("meaning added, id:" + meaning_id + "</br>");
 		
 		if(resultSet != null)
-			resultSet.close(); 
+	resultSet.close(); 
 		if(statement != null) 
-			statement.close();
+	statement.close();
 		if(connection != null) 
-			connection.close(); 
+	connection.close(); 
 	}else if("addSample".equals(action)){
 		String meaning_idString = request.getParameter("meaning_id");
 		int meaning_id = Integer.parseInt(meaning_idString);
@@ -213,38 +212,38 @@
 		//Class.forName("com.mysql.jdbc.Driver"); 
 		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
 		try{
-			Class.forName("org.sqlite.JDBC");
-			connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
-			statement = connection.createStatement();
-			
-			//statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-			//resultSet = statement.getGeneratedKeys();
-			
-			statement.executeUpdate(sql);
-			sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
-			resultSet = statement.executeQuery(sql);
-			if(resultSet.next()!=false){
-				sample_id = resultSet.getInt("id");
-				out.println("meaning added, id:" + sample_id + "</br>");
-			}else{
-				out.println("nothing added");
-			}
-			if(resultSet != null)
-					resultSet.close(); 
-			if(statement != null) 
-				statement.close();
-			if(connection != null) 
-				connection.close();
+	Class.forName("org.sqlite.JDBC");
+	connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
+	statement = connection.createStatement();
+	
+	//statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+	//resultSet = statement.getGeneratedKeys();
+	
+	statement.executeUpdate(sql);
+	sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
+	resultSet = statement.executeQuery(sql);
+	if(resultSet.next()!=false){
+		sample_id = resultSet.getInt("id");
+		out.println("meaning added, id:" + sample_id + "</br>");
+	}else{
+		out.println("nothing added");
+	}
+	if(resultSet != null)
+			resultSet.close(); 
+	if(statement != null) 
+		statement.close();
+	if(connection != null) 
+		connection.close();
 		}catch(SQLException e){
-			e.printStackTrace();
-			if(resultSet != null)
-				resultSet.close(); 
-			if(statement != null) 
-				statement.close();
-			if(connection != null) 
-				connection.close();
+	e.printStackTrace();
+	if(resultSet != null)
+		resultSet.close(); 
+	if(statement != null) 
+		statement.close();
+	if(connection != null) 
+		connection.close();
 		}
 		 
 	}
 	out.println("</br>end of page");
- %>
+%>

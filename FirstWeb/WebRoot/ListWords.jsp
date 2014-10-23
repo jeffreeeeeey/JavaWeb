@@ -1,12 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page language="java" contentType="text/html; charset=utf8" pageEncoding="utf-8" %>
 
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page import="com.selfedu.ConnectDatabase" %>
 <%@ page import="java.sql.*" %>
-
-<jsp:directive.page import="java.sql.Date" />
-<jsp:directive.page import="java.sql.Timestamp" />
-<jsp:directive.page import="java.sql.SQLException" />
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
 <head>
@@ -21,14 +17,22 @@
 		<a href="addWord.jsp" id="link-1">add</a>
 		<br>
 		<%
-			Connection connection = null; Statement statement = null;
+			Connection connection = null; 
+			Statement statement = null;
 			ResultSet resultSet = null; 
+			
 			try{
-				//Class.forName("com.mysql.jdbc.Driver"); 
-				//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
-				Class.forName("org.sqlite.JDBC");
-				connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
-				statement = connection.createStatement();
+				/*
+				SelfSettings settings = new SelfSettings();
+				String jdbcString = settings.SQLiteJDBC;
+				String databaseURL = settings.SQLiteDatabaseURL;
+				Class.forName(jdbcString);
+				connection =DriverManager.getConnection(databaseURL);
+				*/
+				
+				ConnectDatabase connectDatabase = new ConnectDatabase();
+				statement = connectDatabase.getStatement();
+				
 				resultSet = statement.executeQuery("select * from words");
 				while(resultSet.next()){ 
 					int id = resultSet.getInt("id");
@@ -46,7 +50,7 @@
 					if(statement != null) 
 						statement.close();
 					if(connection != null) 
-						connection.close(); 
+						connection.close();
 		%>
 	</body>
 </html>
