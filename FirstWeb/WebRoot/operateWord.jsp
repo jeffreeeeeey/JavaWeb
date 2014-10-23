@@ -138,7 +138,8 @@
 	connection.close(); 
 	//end of del	
 	}else if("edit".equals(action)){
-		String word_id = request.getParameter("word_id");
+		String word_idString = request.getParameter("word_id");
+		int word_id = Integer.parseInt(word_idString);
 		String sql = "SELECT * FROM words WHERE id = " + word_id;
 		
 		Connection connection = null;
@@ -146,25 +147,42 @@
 		ResultSet resultSet_word = null;
 		ResultSet resultSet_meaning = null;
 		ResultSet resultSet_sample = null;
-		Class.forName("org.sqlite.JDBC");
-		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
-		statement = connection.createStatement();
+		
+		ConnectDatabase connectDatabase = new ConnectDatabase();
+		statement = connectDatabase.getStatement();
 		resultSet_word = statement.executeQuery(sql);
-		sql = "SELECT * FROM words_meanings WHERE word_id = " + word_id;
-		resultSet_meaning = statement.executeQuery(sql);
 		
 		if(resultSet_word.next()){
-	request.setAttribute("word_id", word_id);
-	//request.setAttribute("IPA_E", resultSet_word.getString("IPA_E"));
-	//request.setAttribute("IPA_A", resultSet_word.getString("IPA_A"));
-	//request.setAttribute("meaning", resultSet.getString("meaning"));
-	//request.setAttribute("sample", resultSet.getString("sample"));
-	
-	request.setAttribute("action", action);
-	//forward to edit
-	request.getRequestDispatcher("/addWord.jsp").forward(request, response);
+			request.setAttribute("word_id", word_id);
+			request.setAttribute("name", resultSet_word.getString("name"));
+			//request.setAttribute("IPA_E", resultSet_word.getString("IPA_E"));
+			//request.setAttribute("IPA_A", resultSet_word.getString("IPA_A"));
+			//request.setAttribute("meaning", resultSet.getString("meaning"));
+			//request.setAttribute("sample", resultSet.getString("sample"));
+			
+			
+		}else{
+			out.println("no record found");
 		}
 		
+		sql = "SELECT * FROM words_meanings WHERE word_id = " + word_id;
+		resultSet_meaning = statement.executeQuery(sql);
+		if(resultSet_meaning.next()){
+			request.setAttribute("meaning", resultSet_meaning.getString("meaning"));
+			request.setAttribute("action", action);
+			//forward to edit
+			request.getRequestDispatcher("/addWord.jsp").forward(request, response);
+		}
+		
+		
+		if(resultSet_word != null)
+			resultSet_word.close(); 
+		if(resultSet_meaning != null)
+			resultSet_word.close(); 
+		if(statement != null) 
+			statement.close();
+		if(connection != null) 
+			connection.close(); 
 	}else if("addMeaning".equals(action)){
 		String word_idString = request.getParameter("word_id");
 		

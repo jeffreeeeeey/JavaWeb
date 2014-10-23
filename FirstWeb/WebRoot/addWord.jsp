@@ -8,7 +8,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <%
 	String action = (String)request.getAttribute("action");
 	
-	String id = (String)request.getAttribute("word_id");
+	int id = (Integer)request.getAttribute("word_id");
 	String name = (String)request.getAttribute("name");
 	String IPA_E = (String)request.getAttribute("PLA_E");
 	String IPA_A = (String)request.getAttribute("PLA_A");
@@ -73,14 +73,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       <tr>
         <td height="50"><label for="1">Meaning</label></td>
         <td>
-        <textarea name="meaning" id="meaning_textarea" cols="30" rows="3" value="<%= isEdit?meaning:""%>"></textarea></td>
+        <textarea name="meaning" id="meaning_textarea" cols="30" rows="3"><%= isEdit?meaning:""%></textarea></td>
         <td>&nbsp;
         </td>
       </tr>
       <tr>
         <td height="50"><label for="1">Sample</label></td>
         <td>
-        <textarea name="sample" id="sample_textarea" cols="30" rows="3" value="<%= isEdit?sample:""%>"></textarea></td>
+        <textarea name="sample" id="sample_textarea" cols="30" rows="3"><%= isEdit?sample:""%></textarea></td>
         <td>&nbsp;</td>
       </tr>
 
