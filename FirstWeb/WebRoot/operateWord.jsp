@@ -2,6 +2,7 @@
 <%@page import="java.security.interfaces.RSAKey"%>
 <%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
 <%@ page import = "java.sql.*" %>
+<%@ page import = "java.io.*" %>
 <%@ page import = "com.selfedu.ConnectDatabase" %>
 <%
 	String action = request.getParameter("action");
@@ -76,6 +77,9 @@
 			connection.close(); 
 	//end of add
 	}else if("del".equals(action)){
+	/*****************************
+	********Delete word***********
+	*****************************/
 		String word_idString = request.getParameter("word_id");
 		int word_id = Integer.parseInt(word_idString);
 
@@ -138,8 +142,13 @@
 	connection.close(); 
 	//end of del	
 	}else if("edit".equals(action)){
+	/*****************************
+	********Edit word***********
+	*****************************/
+	try{
 		String word_idString = request.getParameter("word_id");
 		int word_id = Integer.parseInt(word_idString);
+		out.println("word_id:" + word_idString + "</br>");
 		String sql = "SELECT * FROM words WHERE id = " + word_id;
 		
 		Connection connection = null;
@@ -153,7 +162,7 @@
 		resultSet_word = statement.executeQuery(sql);
 		
 		if(resultSet_word.next()){
-			request.setAttribute("word_id", word_id);
+			request.setAttribute("word_id", word_idString);
 			request.setAttribute("name", resultSet_word.getString("name"));
 			//request.setAttribute("IPA_E", resultSet_word.getString("IPA_E"));
 			//request.setAttribute("IPA_A", resultSet_word.getString("IPA_A"));
@@ -167,14 +176,18 @@
 		
 		sql = "SELECT * FROM words_meanings WHERE word_id = " + word_id;
 		resultSet_meaning = statement.executeQuery(sql);
+		out.println("sql:" + sql + "</br>");
 		if(resultSet_meaning.next()){
 			request.setAttribute("meaning", resultSet_meaning.getString("meaning"));
-			request.setAttribute("action", action);
-			//forward to edit
-			request.getRequestDispatcher("/addWord.jsp").forward(request, response);
+			
+			
+			
+		}else{
+			out.println("no meaning found</br>");
 		}
-		
-		
+		//forward to edit
+		request.setAttribute("action", action);
+		request.getRequestDispatcher("/addWord.jsp").forward(request, response);
 		if(resultSet_word != null)
 			resultSet_word.close(); 
 		if(resultSet_meaning != null)
@@ -183,6 +196,13 @@
 			statement.close();
 		if(connection != null) 
 			connection.close(); 
+	}catch(IOException e){
+		e.printStackTrace();
+	}catch(SQLException e2){
+		e2.printStackTrace();
+	}
+		
+		
 	}else if("addMeaning".equals(action)){
 		String word_idString = request.getParameter("word_id");
 		
@@ -254,13 +274,14 @@
 		connection.close();
 		}catch(SQLException e){
 	e.printStackTrace();
+	}
 	if(resultSet != null)
 		resultSet.close(); 
 	if(statement != null) 
 		statement.close();
 	if(connection != null) 
 		connection.close();
-		}
+		
 		 
 	}
 	out.println("</br>end of page");

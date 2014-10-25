@@ -14,7 +14,7 @@
 <title>Insert title here</title>
 </head>
 	<body>
-		<a href="addWord.jsp" id="link-1">add</a>
+		<a href="addWord.jsp?action=add" id="link-1">add</a>
 		<br>
 		<%
 			Connection connection = null; 
