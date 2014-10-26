@@ -33,73 +33,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<!--
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
-	<script type="text/javascript">
-	var meaningCounter = 1;
-	var sampleCounter = 1;
 	
-	function addMeaning(){
-		meaningCounter++;
-		var fragment = document.createDocumentFragment();
-		var meaningFieldSet1 = document.getElementById("meaningFieldSet1");
-		//clone a meaning fieldSet
-		var newMeaningFieldSet = meaningFieldSet1.cloneNode(true);
-		//set the new meaning fieldSet
-		newMeaningFieldSet.id = "meaningFieldSet" + meaningCounter;
-		var childs = newMeaningFieldSet.childNodes;
-		for(i = 0; i < childs.length; i++){
-			var ele = childs[i];
-			if(ele.id == "meaning_label1"){
-				ele.id = "meaning_label" + meaningCounter + 2;
-				ele.innerHTML = "new meaning";
-			}else{
-				
-			}
-		}
-		
-		var submitTable = document.getElementById("submitTable");
-		var parent = meaningFieldSet1.parentNode;
-		parent.insertBefore(newMeaningFieldSet, submitTable);
-		
-		
-		
-		//document.getElementById("meaningHeader").innerHTML = "meaning " + meaningCounter;
-		
-		/*
-		var wordDetailTable  = document.getElementById("meaningsTable");
-		
-		
-		var rowLength = wordDetailTable.rows.length;
-		var newMeaningRow = wordDetailTable.insertRow(rowLength - 1);
-		
-		var cell1 = newMeaningRow.insertCell();
-		cell1.border = "1";
-		var cell2 = newMeaningRow.insertCell();
-		cell2.border = "1";
-		var cell3 = newMeaningRow.insertCell();
-		cell3.border = "1";
-		
-		//add meaning
-		var meaningText = document.createTextNode("meaning");
-		var meaningTextArea = document.createElement("textarea");
-		var addSampleBtn = document.createElement("input");
-		addSampleBtn.type = "button";
-		addSampleBtn.value = "add sample";
-		var deleteMeaningBtn = document.createElement("input");
-		deleteMeaningBtn.type = "button";
-		deleteMeaningBtn.value = "delete meaning";
-		cell1.appendChild(meaningText);
-		cell2.appendChild(meaningTextArea);
-		cell3.appendChild(addSampleBtn);
-		cell3.appendChild(deleteMeaningBtn);
-		
-		
-		//frash();
-		*/
-	}
-	</script>
-  </head>
-  
-  <body>
+	</head>
+	<body>
   <div>
 	 <form action="operateWord.jsp" method = "post" id="addWordForm">
 	 	<input type="hidden" name="action" value=<%= isEdit?"save":"add" %>>
@@ -133,27 +69,29 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     </table>
 	 	</fieldset>
 	 	<fieldset id="meaningFieldSet1">
-	 	<legend id="meaninglegend1"><h2 id="meaningHeader">meaning <script type="text/javascript">document.write(/*meaningCounter*/);</script> </h2></legend>
-	 	<table  width="492" border="0" id="meaningsTable1">
+	 	<legend name="meaningLegend"><h2 name="legendText">meaning1</h2></legend>
+	 	<table  width="492" border="0" id="">
+	 	<tbody name="meaning_table1" id="meaning_table1">
 	 	<tr>
         <td width="49">&nbsp;</td>
         <td width="219">&nbsp;</td>
         <td width="202"></td>
       </tr>
-	 	<tr>
-        <td height="50"><label for="meaning_label1">Meaning</label></td>
+	 	<tr id="meaning_row">
+        <td height="50"><label>Meaning</label></td>
         <td>
-        <textarea name="meaning" id="meaning_textarea1" cols="30" rows="3"><%= isEdit?meaning:""%></textarea></td>
-        <td><input type="button" id="newSample" value="add sample" onclick="addMeaning()"></br>
-        	<input type="button" id="newSample" value="delete meaning" onclick="addMeaning()">
+        <textarea name="meaning1" id="meaning1_textarea" cols="30" rows="3"><%= isEdit?meaning:""%></textarea></td>
+        <td><input type="button" id="add_sample" name="add_sample" value="add sample" onclick="addSample(1,'meaning_table1')"></br>
+        	<input type="button" id="delete_meaning" value="delete meaning" onclick="">
         </td>
       </tr>
-      <tr>
+      <tr id="sample_row1">
         <td height="50"><label for="sample1">Sample</label></td>
         <td>
-        <textarea name="sample" id="sample_textarea1" cols="30" rows="3"><%= isEdit?sample:""%></textarea></td>
-        <td><input type="button" id="newSample" value="delete sample" onclick="addMeaning()"></td>
+        <textarea name="meaning1_sample1" id="meaning1_sample1_textarea" cols="30" rows="3"><%= isEdit?sample:""%></textarea></td>
+        <td><input type="button" id="delete_sample" value="delete sample" onclick=""></td>
       </tr>
+      </tbody>
 	 	</table>
 	 	</fieldset>
 	 	
@@ -168,4 +106,176 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	 </form>   
 </div>
   </body>
+  <script type="text/javascript">
+  	var meaningsArray = [];
+  	var samplesArray = [];
+  	var Word = new Object();
+  	Word.meanings = [];
+  	
+  	var meaning1 = new Object();
+  	meaning1.id = 1;
+  	meaning1.text = "";
+  	meaning1.samples = [];
+  	
+  	var sample1 = new Object();
+  	sample1.id = 1;
+  	sample1.text = "";
+  	
+  	meaning1.samples.push(sample1);
+  	Word.meanings.push(meaning1);
+  	
+	var meaningCounter = 1;
+	var sampleCounter = 1;
+	//clone a meaning fieldSet when the page loaded
+	var meaningFieldSet1 = document.getElementById("meaningFieldSet1");
+	var baseMeaningFieldSet = meaningFieldSet1.cloneNode(true);
+	
+	function addMeaning(){
+		meaningCounter = Word.meanings.length;
+		var n = meaningCounter + 1;
+		//create objects of meaning and sample, and add it to the word obj.
+		var newMeaningObj = new Object();
+		newMeaningObj.id = meaningCounter + 1;
+		newMeaningObj.text = "";
+		newMeaningObj.samples = [];
+		
+		var newSampleObj = new Object();
+		newSampleObj.id = 1;
+		newSampleObj.text = "";
+		
+		newMeaningObj.samples.push(newSampleObj);
+		Word.meanings.push(newMeaningObj);
+		
+		
+		/* create elements one by one
+		//Create elements of the fieldset
+		var fragment = document.createDocumentFragment();
+		
+		var new_fieldset = document.createElement("fieldset");
+		new_fieldset.id = "meaning_fieldset" + meaningCounter;
+		var new_legend = document.createElement("legend");
+		var new_legend_h = document.createElement("h2");
+		var new_legend_text = document.createTextNode("meaning" + meaningCounter);
+		
+		var new_table = document.createElement("table");
+		new_table.width = "492";
+		new_table.border = "0";
+		var tbody = document.createElement("tbody");
+		
+		new_legend_h.appendChild(new_legend_text);
+		new_legend.appendChild(new_legend_h);
+		new_fieldset.appendChild(new_legend);
+		new_fieldset.appendChild(new_table);
+		fragment.appendChild(new_fieldset);
+		*/
+		
+		// clone a new one from the base
+		var newMeaningFieldSet = baseMeaningFieldSet.cloneNode(true);
+		
+		var parent = meaningFieldSet1.parentNode;
+		
+		//set the new meaning fieldSet, and insert it before the submit button
+		newMeaningFieldSet.id = "meaningFieldSet" + Word.meanings.length;
+		
+		var submitTable = document.getElementById("submitTable");
+		
+		parent.insertBefore(newMeaningFieldSet, submitTable);
+		
+		//set the id and name of meanings and samples, so when submit the form, request can get parameters.
+		var meanings = document.getElementsByName("meaning1");
+		//Iterate the meaning textareas, get the last one
+		for(i = 0; i < meanings.length; i++){
+			if(i == meanings.length - 1){
+				var ele = meanings[i];
+				ele.id = "meaning" + (meaningCounter + 1) + "_textarea";
+				ele.name = "meaning" + (meaningCounter + 1);
+			}
+		}
+		var samples = document.getElementsByName("meaning1_sample1");
+		//Get the added sample textarea
+		for (var i = 0; i < samples.length; i++) {
+			if(i == samples.length - 1){
+				var ele = samples[i];
+				ele.id = "meaning" + (meaningCounter+1) + "_sample" + 1 + "_textarea";
+				ele.name = "meaning" + (meaningCounter+1) + "_sample" + 1;
+			}
+		}
+		//Set the id of table, can use it when add sample
+		var tables = document.getElementsByName("meaning_table1");
+		for (var i = 0; i < tables.length; i++) {
+			if (i == tables.length - 1) {
+				var ele = tables[i];
+				ele.id = "meaning_table" + (meaningCounter + 1);
+				ele.name = "meaning_table";
+				//alert(ele.name);
+			}
+		}
+		//Set the buttons
+		var buttons = document.getElementsByName("add_sample");
+		for (var i = 0; i < buttons.length; i++) {
+			if(i == buttons.length - 1){
+				var ele = buttons[i];
+				//var str = "addSample(" + (meaningCounter + 1) +", 'meaning_table" + (meaningCounter + 1) + "')";
+				var str = "good";
+				ele.onclick = str;
+				alert(str);
+			}
+		}
+		
+		//alert(Word.meanings.length);
+		updateLegend();
+	}
+	
+	function updateLegend(){
+		var legends = document.getElementsByName("legendText");
+		for (var i = 0; i < legends.length; i++) {
+			var ele = legends[i];
+			ele.textContent = "meaning" + (i + 1);
+			
+			//alert(ele.textContent);
+		}
+	}
+	
+	function addSample(meaningNum,tableID){
+		var n = meaningNum;
+		var theMeaning = Word.meanings[meaningNum - 1];
+		var sampleNum = theMeaning.samples.length + 1;
+		//add an object to samples array
+		var newSample = new Object();
+		newSample.id = sampleNum;
+		newSample.text = "";
+		theMeaning.samples.push(newSample);
+		
+		var meaning = document.getElementById(tableID);
+		var row = document.createElement("tr");
+		var cell1 = document.createElement("td");
+		var cell2 = document.createElement("td");
+		var cell3 = document.createElement("td");
+		var text = document.createTextNode("sample" + sampleNum);
+		cell1.appendChild(text);
+		var textarea = document.createElement("textarea");
+		textarea.rows = "3";
+		textarea.cols= "30";
+		textarea.name = "meaning" + meaningNum + "_sample" + sampleNum;
+		cell2.appendChild(textarea);
+		var btn = document.createElement("input");
+		btn.type = "button";
+		btn.value = "delete sample";
+		cell3.appendChild(btn);
+		
+		row.appendChild(cell1);
+		row.appendChild(cell2);
+		row.appendChild(cell3);
+		meaning.appendChild(row);
+		
+		
+		
+	}
+	
+	function deleteSample(sample_id){
+		var sample = document.getElementById(sample_id);
+		var parent = sample.parentNode;
+		parent.removeChild(sample);
+	}
+	</script>
 </html>
