@@ -215,10 +215,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		for (var i = 0; i < buttons.length; i++) {
 			if(i == buttons.length - 1){
 				var ele = buttons[i];
-				//var str = "addSample(" + (meaningCounter + 1) +", 'meaning_table" + (meaningCounter + 1) + "')";
-				var str = "good";
-				ele.onclick = str;
-				alert(str);
+				var n = meaningCounter + 1;
+				var m = "meaning_table" + n;
+				ele.onclick = function(){
+					addSample(n,m);
+				};
+				
 			}
 		}
 		
