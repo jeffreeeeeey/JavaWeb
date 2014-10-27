@@ -8,6 +8,9 @@
 	String action = request.getParameter("action");
 	
 	if("add".equals(action)){
+		for(Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();)
+			out.println(e.nextElement());
+	/*
 		String name = request.getParameter("name");
 		String IPA_E = request.getParameter("IPA_E");
 		String IPA_A = request.getParameter("IPA_A");
@@ -76,6 +79,7 @@
 		if(connection != null) 
 			connection.close(); 
 	//end of add
+	*/
 	}else if("del".equals(action)){
 	/*****************************
 	********Delete word***********
