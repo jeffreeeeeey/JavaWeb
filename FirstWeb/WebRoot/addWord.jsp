@@ -80,7 +80,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	 	<tr id="meaning_row">
         <td height="50"><label>Meaning</label></td>
         <td>
-        <textarea name="meaning1" id="meaning1_textarea" cols="30" rows="3"><%= isEdit?meaning:""%></textarea></td>
+        <textarea name="meaning" id="meaning1_textarea" cols="30" rows="3"><%= isEdit?meaning:""%></textarea></td>
         <td><input type="button" id="add_sample" name="add_sample" value="add sample" onclick="addSample(1,'meaning_table1')"></br>
         	<input type="button" id="delete_meaning" value="delete meaning" onclick="">
         </td>
@@ -88,7 +88,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       <tr id="sample_row1">
         <td height="50"><label for="sample1">Sample</label></td>
         <td>
-        <textarea name="meaning1_sample1" id="meaning1_sample1_textarea" cols="30" rows="3"><%= isEdit?sample:""%></textarea></td>
+        <textarea name="meaning1_sample" id="meaning1_sample1_textarea" cols="30" rows="3"><%= isEdit?sample:""%></textarea></td>
         <td><input type="button" id="delete_sample" value="delete sample" onclick=""></td>
       </tr>
       </tbody>
@@ -182,22 +182,22 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		parent.insertBefore(newMeaningFieldSet, submitTable);
 		
 		//set the id and name of meanings and samples, so when submit the form, request can get parameters.
-		var meanings = document.getElementsByName("meaning1");
+		var meanings = document.getElementsByName("meaning");
 		//Iterate the meaning textareas, get the last one
 		for(i = 0; i < meanings.length; i++){
 			if(i == meanings.length - 1){
 				var ele = meanings[i];
 				ele.id = "meaning" + (meaningCounter + 1) + "_textarea";
-				ele.name = "meaning" + (meaningCounter + 1);
+				ele.name = "meaning";// + (meaningCounter + 1);
 			}
 		}
-		var samples = document.getElementsByName("meaning1_sample1");
+		var samples = document.getElementsByName("meaning1_sample");
 		//Get the added sample textarea
 		for (var i = 0; i < samples.length; i++) {
 			if(i == samples.length - 1){
 				var ele = samples[i];
 				ele.id = "meaning" + (meaningCounter+1) + "_sample" + 1 + "_textarea";
-				ele.name = "meaning" + (meaningCounter+1) + "_sample" + 1;
+				ele.name = "meaning" + (meaningCounter+1) + "_sample";
 			}
 		}
 		//Set the id of table, can use it when add sample
@@ -258,7 +258,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		var textarea = document.createElement("textarea");
 		textarea.rows = "3";
 		textarea.cols= "30";
-		textarea.name = "meaning" + meaningNum + "_sample" + sampleNum;
+		textarea.id = "meaning" + meaningNum + "_sample" + sampleNum;
+		textarea.name = "meaning" + meaningNum + "_sample";
 		cell2.appendChild(textarea);
 		var btn = document.createElement("input");
 		btn.type = "button";
@@ -269,9 +270,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		row.appendChild(cell2);
 		row.appendChild(cell3);
 		meaning.appendChild(row);
-		
-		
-		
 	}
 	
 	function deleteSample(sample_id){

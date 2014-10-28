@@ -8,14 +8,30 @@
 	String action = request.getParameter("action");
 	
 	if("add".equals(action)){
-		for(Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();)
-			out.println(e.nextElement());
-	/*
+		/*
+		out.println("meanings:");
+		String[] meaningValues = null;
+		meaningValues = request.getParameterValues("meaning");
+		for(String s:meaningValues)
+			out.println(s + ",");
+		out.print("</br>");
+		int n = meaningValues.length;
+		for(int i = 0; i < n; i++){
+			out.println("samples of meaning" + (i + 1) + ":");
+			//String meaningString = meaningValues[i];
+			String sampleName = "meaning" + (i + 1) + "_sample";
+			String[] sampleValues = request.getParameterValues(sampleName);
+			for(String s:sampleValues){
+				out.println(s + ",");
+			}
+			out.println("</br>");
+		}
+		*/
+	
 		String name = request.getParameter("name");
 		String IPA_E = request.getParameter("IPA_E");
 		String IPA_A = request.getParameter("IPA_A");
-		String meaning = request.getParameter("meaning");
-		String sample = request.getParameter("sample");
+		
 		String sql = null;
 		
 		Connection connection = null;
@@ -38,7 +54,6 @@
 			resultSet = statement.executeQuery(sql);
 			resultSet.next();
 			word_id = resultSet.getInt("id");
-	
 		}
 		//add IPAs
 		if(!(IPA_E.isEmpty()&&IPA_A.isEmpty())){
@@ -47,30 +62,46 @@
 		}
 		
 		//add meaning in table, get the id
-		if(!meaning.isEmpty()){
-	
-			sql = "INSERT INTO words_meanings (word_id, meaning) values " + "('" + word_id +"', '" + meaning + "')";
-			statement.executeUpdate(sql);
-			sql = "SELECT * FROM words_meanings ORDER BY id DESC LIMIT 1";
-			resultSet = statement.executeQuery(sql);
-			resultSet.next();
-			meaning_id = resultSet.getInt("id");
+		String[] meaningValues = request.getParameterValues("meaning");
+		int n = meaningValues.length;
+		for(int i = 0; i < n; i++){
+			String meaningString = meaningValues[i];
+			String sampleName = "meaning" + (i + 1) + "_sample";
+			String[] sampleValues = request.getParameterValues(sampleName);
+			
+			if(!meaningString.isEmpty()){
+				sql = "INSERT INTO words_meanings (word_id, meaning) values " + "('" + word_id +"', '" + meaningString + "')";
+				statement.executeUpdate(sql);
+				sql = "SELECT * FROM words_meanings ORDER BY id DESC LIMIT 1";
+				resultSet = statement.executeQuery(sql);
+				resultSet.next();
+				meaning_id = resultSet.getInt("id");
+			}
+			
+			for(String s:sampleValues){
+				if(!s.isEmpty()){
+				sql = "INSERT INTO meaning_samples (meaning_id, sample) values " + "('" + meaning_id +"', '" + s + "')";
+				statement.executeUpdate(sql);
+				sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
+				resultSet = statement.executeQuery(sql);
+				resultSet.next();
+				sample_id = resultSet.getInt("id");
+				}
+			}
+			out.println("</br>");
 		}
 		
+		
+		
 		//add sample in table, get the id
-		if(!sample.isEmpty()){
-			sql = "INSERT INTO meaning_samples (meaning_id, sample) values " + "('" + meaning_id +"', '" + sample + "')";
-			statement.executeUpdate(sql);
-			sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
-			resultSet = statement.executeQuery(sql);
-			resultSet.next();
-			sample_id = resultSet.getInt("id");
-		}
+		
 		out.println("<html> <body>");
 		out.println("executing: "+sql +"</br>");
 		out.println("add " + result + "words, </br>");
 		out.println("word id:" + word_id + "</br>" + "meaning id:" + meaning_id + "</br>" + "sample id:" + sample_id + "</br>");
 		out.println("</body></html>");
+		
+		
 		
 		if(resultSet != null)
 			resultSet.close(); 
@@ -78,8 +109,10 @@
 			statement.close();
 		if(connection != null) 
 			connection.close(); 
+		//request.setAttribute("word_id", word_id);
+		//request.getRequestDispatcher("/WordDetails.jsp").forward(request, response);
 	//end of add
-	*/
+	
 	}else if("del".equals(action)){
 	/*****************************
 	********Delete word***********
@@ -285,7 +318,6 @@
 		statement.close();
 	if(connection != null) 
 		connection.close();
-		
 		 
 	}
 	out.println("</br>end of page");

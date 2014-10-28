@@ -68,7 +68,7 @@
 		WordMeaning wordMeaning = meanings.get(i);
 		int meaning_id = wordMeaning.id;
 		String meaning = wordMeaning.meaning;
-		out.println("* " + meaning + " <a href=\"" + meaning_id + "\">Edit</a></br><a href=\"addSample.jsp?meaning_id=" + meaning_id + "\">add sample</a> </br>");
+		out.println("* " + meaning + " <a href=\"" + meaning_id + "\">Edit</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"addSample.jsp?meaning_id=" + meaning_id + "\">add sample</a> </br>");
 		
 		//get sample of this meaning
 		wordMeaning.samplesArrayList = new ArrayList<MeaningSample>();
