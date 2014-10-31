@@ -220,7 +220,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				ele.onclick = function(){
 					addSample(n,m);
 				};
-				
 			}
 		}
 		
@@ -250,6 +249,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		
 		var meaning = document.getElementById(tableID);
 		var row = document.createElement("tr");
+		row.id = "menaing" + meaningNum + "_sample" + sampleNum + "_tr";
 		var cell1 = document.createElement("td");
 		var cell2 = document.createElement("td");
 		var cell3 = document.createElement("td");
@@ -264,6 +264,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		var btn = document.createElement("input");
 		btn.type = "button";
 		btn.value = "delete sample";
+		btn.onclick = function(){
+			deleteSample("");
+		}
 		cell3.appendChild(btn);
 		
 		row.appendChild(cell1);
@@ -272,10 +275,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		meaning.appendChild(row);
 	}
 	
-	function deleteSample(sample_id){
+	function deleteSample(sampleRow_id){
 		var sample = document.getElementById(sample_id);
 		var parent = sample.parentNode;
 		parent.removeChild(sample);
+	}
+	
+	function deleteMeaning(meaning_id){
+		
 	}
 	</script>
 </html>
