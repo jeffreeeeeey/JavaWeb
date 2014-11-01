@@ -82,14 +82,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <td>
         <textarea name="meaning" id="meaning1_textarea" cols="30" rows="3"><%= isEdit?meaning:""%></textarea></td>
         <td><input type="button" id="add_sample" name="add_sample" value="add sample" onclick="addSample(1,'meaning_table1')"></br>
-        	<input type="button" id="delete_meaning" value="delete meaning" onclick="">
+        	<input type="button" name="deleteMeaningBtn" id="deleteMeaningBtn_1" value="delete meaning" onclick="deleteMeaning('meaningFieldSet1')">
         </td>
       </tr>
-      <tr id="sample_row1">
+      <tr id="meaning1_sample1_tr", name="sample_tr">
         <td height="50"><label for="sample1">Sample</label></td>
         <td>
         <textarea name="meaning1_sample" id="meaning1_sample1_textarea" cols="30" rows="3"><%= isEdit?sample:""%></textarea></td>
-        <td><input type="button" id="delete_sample" value="delete sample" onclick=""></td>
+        <td><input type="button" id="delete_sample" name="deleteSampleBtn" value="delete sample" onclick="deleteSample('meaning1_sample1_tr')"></td>
       </tr>
       </tbody>
 	 	</table>
@@ -132,6 +132,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	
 	function addMeaning(){
 		meaningCounter = Word.meanings.length;
+		console.log("meaningCounter:" + meaningCounter);
 		var n = meaningCounter + 1;
 		//create objects of meaning and sample, and add it to the word obj.
 		var newMeaningObj = new Object();
@@ -172,12 +173,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		// clone a new one from the base
 		var newMeaningFieldSet = baseMeaningFieldSet.cloneNode(true);
 		
-		var parent = meaningFieldSet1.parentNode;
+		
 		
 		//set the new meaning fieldSet, and insert it before the submit button
 		newMeaningFieldSet.id = "meaningFieldSet" + Word.meanings.length;
 		
 		var submitTable = document.getElementById("submitTable");
+		var parent = submitTable.parentNode;
 		
 		parent.insertBefore(newMeaningFieldSet, submitTable);
 		
@@ -191,8 +193,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				ele.name = "meaning";// + (meaningCounter + 1);
 			}
 		}
-		var samples = document.getElementsByName("meaning1_sample");
 		//Get the added sample textarea
+		var samples = document.getElementsByName("meaning1_sample");
+		
 		for (var i = 0; i < samples.length; i++) {
 			if(i == samples.length - 1){
 				var ele = samples[i];
@@ -210,17 +213,51 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				//alert(ele.name);
 			}
 		}
-		//Set the buttons
-		var buttons = document.getElementsByName("add_sample");
-		for (var i = 0; i < buttons.length; i++) {
-			if(i == buttons.length - 1){
-				var ele = buttons[i];
+		//Set the sample row, need it when delete
+		var sampleRows = document.getElementsByName("sample_tr");
+		var thisSampleRow;
+		for (var i = 0; i < sampleRows.length; i++) {
+			if(i == sampleRows.length - 1){
+				thisSampleRow = sampleRows[i];
+				thisSampleRow.id = "meaning" + (meaningCounter+1) + "_sample" + 1 + "_tr";
+			}
+		}
+		
+		//Set the add sample button
+		var addSampleButtons = document.getElementsByName("add_sample");
+		for (var i = 0; i < addSampleButtons.length; i++) {
+			if(i == addSampleButtons.length - 1){
+				var ele = addSampleButtons[i];
 				var n = meaningCounter + 1;
 				var m = "meaning_table" + n;
 				ele.onclick = function(){
 					addSample(n,m);
 				};
 			}
+		}
+		//Set the delete sample button
+		var deleteSampleBtns = document.getElementsByName("deleteSampleBtn");
+		if(deleteSampleBtns.length > 1){
+			var n = deleteSampleBtns.length - 1;
+			var ele = deleteSampleBtns[n];
+			
+			ele.onclick = function() {
+				deleteSample("meaning" + (meaningCounter+1) + "_sample" + 1 + "_tr");
+			}
+		}
+		
+		//Set the delete meaning button
+		var deleteMeaningBtns = document.getElementsByName("deleteMeaningBtn");
+		for (var i = 0; i < deleteMeaningBtns.length; i++) {
+			if(i == deleteMeaningBtns.length - 1){
+				var ele = deleteMeaningBtns[i];
+				var fieldSet = "meaningFieldSet" + (meaningCounter + 1);
+				//alert(fieldSet);
+				ele.onclick = function(){
+					deleteMeaning(fieldSet);
+				}
+			}
+			
 		}
 		
 		//alert(Word.meanings.length);
@@ -236,9 +273,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			//alert(ele.textContent);
 		}
 	}
-	
+	// get which meaning is, and the meaning table, add the new sample row as it's child
 	function addSample(meaningNum,tableID){
-		var n = meaningNum;
+		console.log("meaning num:" + meaningNum);
+		meaningNum++;
 		var theMeaning = Word.meanings[meaningNum - 1];
 		var sampleNum = theMeaning.samples.length + 1;
 		//add an object to samples array
@@ -258,14 +296,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		var textarea = document.createElement("textarea");
 		textarea.rows = "3";
 		textarea.cols= "30";
-		textarea.id = "meaning" + meaningNum + "_sample" + sampleNum;
+		textarea.id = "meaning" + meaningNum + "_sample" + sampleNum + "_textarea";
 		textarea.name = "meaning" + meaningNum + "_sample";
 		cell2.appendChild(textarea);
 		var btn = document.createElement("input");
 		btn.type = "button";
 		btn.value = "delete sample";
 		btn.onclick = function(){
-			deleteSample("");
+			deleteSample(row.id );
 		}
 		cell3.appendChild(btn);
 		
@@ -276,13 +314,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	}
 	
 	function deleteSample(sampleRow_id){
-		var sample = document.getElementById(sample_id);
+		var sample = document.getElementById(sampleRow_id);
 		var parent = sample.parentNode;
 		parent.removeChild(sample);
 	}
 	
-	function deleteMeaning(meaning_id){
-		
+	function deleteMeaning(meaningFieldSet_id){
+		var fieldset = document.getElementById(meaningFieldSet_id);
+		var parent = fieldset.parentNode;
+		parent.removeChild(fieldset);
 	}
 	</script>
 </html>

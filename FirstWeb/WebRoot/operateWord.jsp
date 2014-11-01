@@ -3,7 +3,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
 <%@ page import = "java.sql.*" %>
 <%@ page import = "java.io.*" %>
-<%@ page import = "com.selfedu.ConnectDatabase" %>
+<%@ page import = "com.selfedu.*" %>
 <%
 	String action = request.getParameter("action");
 	
@@ -61,34 +61,43 @@
 			statement.executeUpdate(sql);
 		}
 		
-		//add meaning in table, get the id
+		//insert meaning in database, get the id
 		String[] meaningValues = request.getParameterValues("meaning");
 		int n = meaningValues.length;
-		for(int i = 0; i < n; i++){
-			String meaningString = meaningValues[i];
-			String sampleName = "meaning" + (i + 1) + "_sample";
-			String[] sampleValues = request.getParameterValues(sampleName);
-			
-			if(!meaningString.isEmpty()){
-				sql = "INSERT INTO words_meanings (word_id, meaning) values " + "('" + word_id +"', '" + meaningString + "')";
-				statement.executeUpdate(sql);
-				sql = "SELECT * FROM words_meanings ORDER BY id DESC LIMIT 1";
-				resultSet = statement.executeQuery(sql);
-				resultSet.next();
-				meaning_id = resultSet.getInt("id");
-			}
-			
-			for(String s:sampleValues){
-				if(!s.isEmpty()){
-				sql = "INSERT INTO meaning_samples (meaning_id, sample) values " + "('" + meaning_id +"', '" + s + "')";
-				statement.executeUpdate(sql);
-				sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
-				resultSet = statement.executeQuery(sql);
-				resultSet.next();
-				sample_id = resultSet.getInt("id");
+		try{
+			for(int i = 0; i < n; i++){
+				String meaningString = meaningValues[i];
+				String sampleName = "meaning" + (i + 1) + "_sample";
+				String[] sampleValues = request.getParameterValues(sampleName);
+				
+				if(!meaningString.isEmpty()){
+					sql = "INSERT INTO words_meanings (word_id, meaning) values " + "('" + word_id +"', '" + meaningString + "')";
+					statement.executeUpdate(sql);
+					sql = "SELECT * FROM words_meanings ORDER BY id DESC LIMIT 1";
+					resultSet = statement.executeQuery(sql);
+					resultSet.next();
+					meaning_id = resultSet.getInt("id");
 				}
+				
+				for(String s:sampleValues){
+					sql = "INSERT INTO meaning_samples (meaning_id, sample) values " + "('" + meaning_id +"', '" + s + "')";
+					statement.executeUpdate(sql);
+					//sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
+					//resultSet = statement.executeQuery(sql);
+					//resultSet.next();
+					//sample_id = resultSet.getInt("id");
+				}
+				out.println("</br>");
 			}
-			out.println("</br>");
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			if(resultSet != null)
+				resultSet.close(); 
+			if(statement != null) 
+				statement.close();
+			if(connection != null) 
+				connection.close(); 
 		}
 		
 		
@@ -103,12 +112,7 @@
 		
 		
 		
-		if(resultSet != null)
-			resultSet.close(); 
-		if(statement != null) 
-			statement.close();
-		if(connection != null) 
-			connection.close(); 
+		
 		//request.setAttribute("word_id", word_id);
 		//request.getRequestDispatcher("/WordDetails.jsp").forward(request, response);
 	//end of add
@@ -132,6 +136,9 @@
 		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
 		statement = connection.createStatement();
 		//delete word
+		statement.executeUpdate(sql);
+		//delete IPAs
+		sql = "DELETE FROM IPAs WHERE word_id = " + word_id;
 		statement.executeUpdate(sql);
 		//get the meaning id
 		ArrayList<Integer> meaningIDs = new ArrayList<Integer>();
@@ -198,9 +205,15 @@
 		statement = connectDatabase.getStatement();
 		resultSet_word = statement.executeQuery(sql);
 		
+		Word word = new Word();
 		if(resultSet_word.next()){
+			
+			word.name = resultSet_word.getString("name");
+			
+			
 			request.setAttribute("word_id", word_idString);
 			request.setAttribute("name", resultSet_word.getString("name"));
+			
 			//request.setAttribute("IPA_E", resultSet_word.getString("IPA_E"));
 			//request.setAttribute("IPA_A", resultSet_word.getString("IPA_A"));
 			//request.setAttribute("meaning", resultSet.getString("meaning"));
@@ -210,18 +223,34 @@
 		}else{
 			out.println("no record found");
 		}
-		
+		//add meanings
 		sql = "SELECT * FROM words_meanings WHERE word_id = " + word_id;
 		resultSet_meaning = statement.executeQuery(sql);
 		out.println("sql:" + sql + "</br>");
 		if(resultSet_meaning.next()){
+			WordMeaning meaning = new WordMeaning();
+			meaning.id = resultSet_meaning.getString("id");
+			meaning.word_id = resultSet_meaning.getString("word_id");
+			meaning.meaning = resultSet_meaning.getString("meaning");
+			word.meanings.add(meaning);
+			
+			//add samples
+			sql = "SELECT * FROM meaning_samples WHERE meaning_id = " + meaning.id;
+			resultSet_sample = statement.executeQuery(sql);
+			if(resultSet_sample.next()){
+				MeaningSample sample = new MeaningSample();
+				sample.id = resultSet_sample.getString("id");
+				sample.meaning_id = resultSet_sample.getString("meaning_id");
+				sample.sample = resultSet_sample.getString("sample");
+				meaning.samplesArrayList.add(sample);
+			}
+			
 			request.setAttribute("meaning", resultSet_meaning.getString("meaning"));
-			
-			
-			
 		}else{
 			out.println("no meaning found</br>");
 		}
+		request.setAttribute("word", word);
+		
 		//forward to edit
 		request.setAttribute("action", action);
 		request.getRequestDispatcher("/addWord.jsp").forward(request, response);

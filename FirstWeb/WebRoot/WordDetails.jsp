@@ -36,6 +36,7 @@
 		resultSet = statement.executeQuery("SELECT * FROM words WHERE id = '" + word_id +"';");
 		resultSet.next();
 		String name = resultSet.getString("name");
+		resultSet = statement.executeQuery("SELECT * FROM IPAs WHERE word_id = " + word_id);
 		String IPA_E = resultSet.getString("IPA_E");
 		String IPA_A = resultSet.getString("IPA_A");
 		out.print("<strong>" + name + "</strong>" + "</br><a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a> </br>");
