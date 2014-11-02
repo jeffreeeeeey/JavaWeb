@@ -114,7 +114,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         	<input type="button" name="deleteMeaningBtn" id="deleteMeaningBtn_1" value="delete meaning" onclick="deleteMeaning('meaningFieldSet1')">
         </td>
       </tr>
-      <tr id="meaning1_sample1_tr", name="sample_tr">
+      <tr id="meaning1_sample1_tr" name="sample_tr">
         <td height="50"><label for="sample1">Sample</label></td>
         <td>
         <textarea name="meaning1_sample" id="meaning1_sample1_textarea" cols="30" rows="3"></textarea></td>
@@ -366,8 +366,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			out.println("ipa_a.value='" + IPA_A + "'");
 			out.println("characterText = " + "'" + character + "'");
 			for(int i = 0; i < word.meanings.size(); i++){
-				if(i > 0)
+				if(i > 0){
 					out.println("addMeaning();");
+				}
 				WordMeaning meaning = word.meanings.get(i);
 				int n = i + 1;
 				out.println("var meaning" + n + " = document.getElementById(\"meaning" + n + "_textarea\")");
@@ -376,7 +377,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					if(j > 0){
 						int meaningNum  = i + 1;
 						String tableID = "meaning_table" + meaningNum;
-						out.println("addSample(" +meaningNum + "," + tableID + ");");
+						out.println("addSample(" + i + ",'" + tableID + "');");
 					}
 					
 					MeaningSample sample = meaning.samplesArrayList.get(j);
