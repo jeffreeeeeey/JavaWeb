@@ -1,4 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
+<%@ page import="com.selfedu.*" %>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -7,16 +8,26 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%
 	String action = (String)request.getAttribute("action");
+	Word word;
+	String id = null;
+	String name = null;
+	String IPA_E = null;
+	String IPA_A = null;
+	String character = null;
+	
+	//String meaning = null;
+	//String sample = null;
 	
 	boolean isEdit = "edit".equals(action);
 	
+	/*
 	String id = (String)request.getAttribute("word_id");
 	String name = (String)request.getAttribute("name");
 	String IPA_E = (String)request.getAttribute("PLA_E");
 	String IPA_A = (String)request.getAttribute("PLA_A");
-	String meaning = (String)request.getAttribute("meaning");
-	String sample = (String)request.getAttribute("sample");
- %>
+	
+	*/
+%>
 
 <html>
   <head>
@@ -48,19 +59,37 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       <tr>
         <td height="50"><label for="1">Word</label></td>
         <td>
-        <input type="text" name="name" id="1" value="<%= isEdit?name:""%>"/></td>
+        <input type="text" name="name" id="wordNameInput" value="<%= isEdit?name:""%>"/></td>
         <td>&nbsp;</td>
       </tr>
       <tr>
         <td height="50"><label for="1">IPA</label></td>
         <td>
-        <label>E </label> <input type="text" name="IPA_E" id="1" value="<%= isEdit?IPA_E:""%>"/>
+        <label>E </label> <input type="text" name="IPA_E" id="IPA_EInput" value="<%= isEdit?IPA_E:""%>"/>
         
         </td>
         <td>
-        <label>A </label><input type="text" name="IPA_A" id="1" value="<%= isEdit?IPA_A:""%>"/></td>
+        <label>A </label><input type="text" name="IPA_A" id="IPA_AInput" value="<%= isEdit?IPA_A:""%>"/></td>
       </tr>
       <tr>
+      	<td>
+      	character
+      	</td>
+      	<td>
+	      	<select id="character" name="character">
+	      	<option>noun</option>
+	      	<option>adjective</option>
+	      	<option>adverb</option>
+	      	<option>article</option>
+	      	<option>prep</option>
+	      	<option>pronoun</option>
+	      	<option>conjunction</option>
+	      	<option>numeral</option>
+	      	<option>interjection</option>
+	      	</select>
+      	</td>
+      </tr>
+      <tr height=60>
       	<td>&nbsp;</td>
       	<td><input type="button" id="newMeaning" value="add meaning" onclick="addMeaning()"></td>
       	<td>&nbsp;</td>
@@ -80,7 +109,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	 	<tr id="meaning_row">
         <td height="50"><label>Meaning</label></td>
         <td>
-        <textarea name="meaning" id="meaning1_textarea" cols="30" rows="3"><%= isEdit?meaning:""%></textarea></td>
+        <textarea name="meaning" id="meaning1_textarea" cols="30" rows="3"></textarea></td>
         <td><input type="button" id="add_sample" name="add_sample" value="add sample" onclick="addSample(1,'meaning_table1')"></br>
         	<input type="button" name="deleteMeaningBtn" id="deleteMeaningBtn_1" value="delete meaning" onclick="deleteMeaning('meaningFieldSet1')">
         </td>
@@ -88,7 +117,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       <tr id="meaning1_sample1_tr", name="sample_tr">
         <td height="50"><label for="sample1">Sample</label></td>
         <td>
-        <textarea name="meaning1_sample" id="meaning1_sample1_textarea" cols="30" rows="3"><%= isEdit?sample:""%></textarea></td>
+        <textarea name="meaning1_sample" id="meaning1_sample1_textarea" cols="30" rows="3"></textarea></td>
         <td><input type="button" id="delete_sample" name="deleteSampleBtn" value="delete sample" onclick="deleteSample('meaning1_sample1_tr')"></td>
       </tr>
       </tbody>
@@ -146,29 +175,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		
 		newMeaningObj.samples.push(newSampleObj);
 		Word.meanings.push(newMeaningObj);
-		
-		
-		/* create elements one by one
-		//Create elements of the fieldset
-		var fragment = document.createDocumentFragment();
-		
-		var new_fieldset = document.createElement("fieldset");
-		new_fieldset.id = "meaning_fieldset" + meaningCounter;
-		var new_legend = document.createElement("legend");
-		var new_legend_h = document.createElement("h2");
-		var new_legend_text = document.createTextNode("meaning" + meaningCounter);
-		
-		var new_table = document.createElement("table");
-		new_table.width = "492";
-		new_table.border = "0";
-		var tbody = document.createElement("tbody");
-		
-		new_legend_h.appendChild(new_legend_text);
-		new_legend.appendChild(new_legend_h);
-		new_fieldset.appendChild(new_legend);
-		new_fieldset.appendChild(new_table);
-		fragment.appendChild(new_fieldset);
-		*/
 		
 		// clone a new one from the base
 		var newMeaningFieldSet = baseMeaningFieldSet.cloneNode(true);
@@ -277,6 +283,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	function addSample(meaningNum,tableID){
 		console.log("meaning num:" + meaningNum);
 		meaningNum++;
+		
 		var theMeaning = Word.meanings[meaningNum - 1];
 		var sampleNum = theMeaning.samples.length + 1;
 		//add an object to samples array
@@ -325,4 +332,68 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		parent.removeChild(fieldset);
 	}
 	</script>
+	
+	<!-- If edit, set the meaning and sample form and values -->
+	<script tye="text/javascript">
+	var isEdit = false;
+	<%
+		if(isEdit){
+			out.println("isEdit = true");
+			
+		 }
+	 %>
+	 if(isEdit){
+ 		setForm();
+ 	 }
+	 function setForm(){
+	 	var name = document.getElementById("wordNameInput");
+	 	var ipa_e = document.getElementById("IPA_EInput");
+	 	var ipa_a = document.getElementById("IPA_AInput");
+	 	var character = document.getElementById("character");
+	 	var characterText;
+	 	
+	 	<%
+	 	if(isEdit){
+		 	word = (Word)request.getAttribute("word");
+			id = String.valueOf(word.id);
+			name = word.name;
+			IPA_E = word.IPAs.get(0);
+			IPA_A = word.IPAs.get(1);
+			character = word.character;
+			ArrayList<WordMeaning> meanings = word.meanings; 
+			out.println("name.value='" + name + "'");
+			out.println("ipa_e.value='" + IPA_E + "'");
+			out.println("ipa_a.value='" + IPA_A + "'");
+			out.println("characterText = " + "'" + character + "'");
+			for(int i = 0; i < word.meanings.size(); i++){
+				if(i > 0)
+					out.println("addMeaning();");
+				WordMeaning meaning = word.meanings.get(i);
+				int n = i + 1;
+				out.println("var meaning" + n + " = document.getElementById(\"meaning" + n + "_textarea\")");
+				out.println("meaning" + n + ".value = " + "'" + meaning.meaning + "'");
+				for(int j = 0; j < meaning.samplesArrayList.size(); j++){
+					if(j > 0){
+						int meaningNum  = i + 1;
+						String tableID = "meaning_table" + meaningNum;
+						out.println("addSample(" +meaningNum + "," + tableID + ");");
+					}
+					
+					MeaningSample sample = meaning.samplesArrayList.get(j);
+					int m = j + 1;
+					out.println("var sample" + m + " = document.getElementById(\"meaning" + n + "_sample" + m + "_textarea\")");
+					out.println("sample" + m + ".value = " + "'" + sample.sample + "'");
+				}
+			}
+		}
+	 	%>
+	 	for(var i = 0; i < character.options.length; i++){
+			if(character.options[i].text == characterText){
+				character.options[i].selected = true;
+			}
+		}
+	 }
+	
+	</script>
+	
 </html>

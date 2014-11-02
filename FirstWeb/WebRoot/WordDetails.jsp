@@ -1,3 +1,4 @@
+<%@page import="com.selfedu.ConnectDatabase"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.Dictionary"%>
 <%@ page import="java.sql.SQLException"%>
@@ -5,7 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ page import = "java.sql.*" %>
-<%@ page import = "com.selfedu.WordMeaning" %>
+<%@ page import = "com.selfedu.*" %>
 <%@ page import = "com.selfedu.MeaningSample" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -24,23 +25,30 @@
 	ResultSet resultSet = null; 
 	ResultSet resultSet_meaning = null;
 	ResultSet resultSet_sample = null;
-	
+	/*
 	try{
 		//Class.forName("com.mysql.jdbc.Driver"); 
 		//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
 		
 		Class.forName("org.sqlite.JDBC");
 		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
-		
+		//Get word name
 		statement = connection.createStatement();
-		resultSet = statement.executeQuery("SELECT * FROM words WHERE id = '" + word_id +"';");
+		resultSet = statement.executeQuery("SELECT * FROM words WHERE id = " + word_id);
 		resultSet.next();
 		String name = resultSet.getString("name");
-		resultSet = statement.executeQuery("SELECT * FROM IPAs WHERE word_id = " + word_id);
-		String IPA_E = resultSet.getString("IPA_E");
-		String IPA_A = resultSet.getString("IPA_A");
+		String character = resultSet.getString("character");
+		
 		out.print("<strong>" + name + "</strong>" + "</br><a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a> </br>");
-		out.println("IPA: /" + IPA_E + "/  /" + IPA_A + "/</br>");
+		out.print(character + "</br>");
+		//Get IPAs
+		resultSet = statement.executeQuery("SELECT * FROM IPAs WHERE word_id = " + word_id);
+		if(resultSet.next()){
+			String IPA_E = resultSet.getString("IPA_E");
+			String IPA_A = resultSet.getString("IPA_A");
+			out.println("IPA: /" + IPA_E + "/  /" + IPA_A + "/</br>");
+		}
+		
 	}catch(SQLException e){
 		e.printStackTrace();
 	}
@@ -56,13 +64,6 @@
 		wordMeaning.meaning = meaning;
 		meanings.add(wordMeaning);
 		
-		//get sample by meaning id
-		/*
-		resultSet_sample = statement.executeQuery("SELECT * FROM meaning_samples WHERE meaning_id = " + meaning_id);
-		resultSet_sample.next();
-		String sample = resultSet_sample.getString("sample");
-		out.println(sample + "</br>");
-		*/
 	}
 		
 	for(int i = 0; i < meanings.size(); i++){
@@ -107,7 +108,26 @@
 		resultSet_meaning.close();
 	if(connection != null)
 	connection.close();
+	*/
 	
+	ConnectDatabase connectDatabase = new ConnectDatabase();
+	Word word = connectDatabase.getWord(word_id);
+	
+	String name = word.name;
+	String character = word.character;
+		
+	out.print("<strong>" + name + "</strong></br>");
+	out.print(character + "</br>");
+	for(String ipa : word.IPAs){
+		out.println(ipa + "&nbsp;");
+	}
+	out.println("</br>");
+	for(WordMeaning meaning : word.meanings){
+		out.print("*" + meaning.meaning + "</br>");
+		for(MeaningSample sample : meaning.samplesArrayList){
+			out.println("<em>" + sample.sample + "</em></br>");
+		}
+	}
  %>
 
 
