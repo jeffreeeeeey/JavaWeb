@@ -10,6 +10,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	String action = (String)request.getAttribute("action");
 	Word word;
 	String id = null;
+	
+	String word_idString = request.getParameter("word_id");
+	int word_id = Integer.parseInt(word_idString);
 	String name = null;
 	String IPA_E = null;
 	String IPA_A = null;
@@ -50,7 +53,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <div>
 	 <form action="operateWord.jsp" method = "post" id="addWordForm">
 	 	<input type="hidden" name="action" value=<%= isEdit?"save":"add" %>>
-	 	<input type="hidden" name="id" value="<%=isEdit ? id : "" %>"> 
+	 	<input type="hidden" name="id" value="<%=isEdit ? word_id : "" %>"> 
 	 	<h1><%= isEdit ? "Edit Word" : "Add New Word" %></h1>
 	 	<fieldset id="baseFieldSet">
 	 		<legend><h2>basic</h2></legend>
