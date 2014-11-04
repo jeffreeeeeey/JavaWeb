@@ -49,7 +49,9 @@ public class ConnectDatabase {
 				WordMeaning wordMeaning = new WordMeaning();
 				int meaning_id = resultSet.getInt("id");
 				String meaning = resultSet.getString("meaning");
+				
 				wordMeaning.id = meaning_id;
+				wordMeaning.word_id = word_id;
 				wordMeaning.meaning = meaning;
 				word.meanings.add(wordMeaning);
 				
@@ -65,7 +67,6 @@ public class ConnectDatabase {
 			for(int i = 0; i < word.meanings.size(); i++){
 				WordMeaning wordMeaning = word.meanings.get(i);
 				int meaning_id = wordMeaning.id;
-				String meaning = wordMeaning.meaning;
 				
 				//get sample of this meaning
 				resultSet = statement.executeQuery("SELECT * FROM meaning_samples WHERE meaning_id = " + meaning_id);
@@ -75,6 +76,7 @@ public class ConnectDatabase {
 					int id = resultSet.getInt("id");
 					String sample = resultSet.getString("sample");
 					meaningSample.id = id;
+					meaningSample.meaning_id = meaning_id;
 					meaningSample.sample = sample;
 					
 					wordMeaning.samplesArrayList.add(meaningSample);
