@@ -414,9 +414,8 @@
 			//Class.forName("com.mysql.jdbc.Driver"); 
 			//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
 			try{
-		Class.forName("org.sqlite.JDBC");
-		connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
-		statement = connection.createStatement();
+		ConnectDatabase connectDatabase = new ConnectDatabase();
+		statement = connectDatabase.getStatement();
 		
 		//statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 		//resultSet = statement.getGeneratedKeys();

@@ -11,8 +11,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	Word word;
 	String id = null;
 	
-	String word_idString = request.getParameter("word_id");
-	int word_id = Integer.parseInt(word_idString);
+	
+	int word_id = -1; 
 	String name = null;
 	String IPA_E = null;
 	String IPA_A = null;
@@ -22,6 +22,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	//String sample = null;
 	
 	boolean isEdit = "edit".equals(action);
+	if(isEdit){
+		String word_idString = request.getParameter("word_id");
+		word_id = Integer.parseInt(word_idString);
+	}
 	
 	/*
 	String id = (String)request.getAttribute("word_id");
@@ -94,7 +98,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       </tr>
       <tr height=60>
       	<td>&nbsp;</td>
-      	<td><input type="button" id="newMeaning" value="add meaning" onclick="addMeaning()"></td>
+      	<td><input type="button" disabled="<%= isEdit?"disabled":"" %>" id="newMeaning" value="add meaning" onclick="addMeaning()"></td>
       	<td>&nbsp;</td>
       </tr>
       
@@ -113,15 +117,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <td height="50"><label>Meaning</label></td>
         <td>
         <textarea name="meaning" id="meaning1_textarea" cols="30" rows="3"></textarea></td>
-        <td><input type="button" id="add_sample" name="add_sample" value="add sample" onclick="addSample(1,'meaning_table1')"></br>
-        	<input type="button" name="deleteMeaningBtn" id="deleteMeaningBtn_1" value="delete meaning" onclick="deleteMeaning('meaningFieldSet1')">
+        <td><input type="button" disabled="<%= isEdit?"disabled":"" %>" id="add_sample" name="addSampleBtn" value="add sample" onclick="addSample(1,'meaning_table1')"></br>
+        	<input type="button" disabled="<%= isEdit?"disabled":"" %>" name="deleteMeaningBtn" id="deleteMeaningBtn_1" value="delete meaning" onclick="deleteMeaning('meaningFieldSet1')">
         </td>
       </tr>
       <tr id="meaning1_sample1_tr" name="sample_tr">
         <td height="50"><label for="sample1">Sample</label></td>
         <td>
         <textarea name="meaning1_sample" id="meaning1_sample1_textarea" cols="30" rows="3"></textarea></td>
-        <td><input type="button" id="delete_sample" name="deleteSampleBtn" value="delete sample" onclick="deleteSample('meaning1_sample1_tr')"></td>
+        <td><input type="button" disabled="<%= isEdit?"disabled":"" %>" id="delete_sample" name="deleteSampleBtn" value="delete sample" onclick="deleteSample('meaning1_sample1_tr')"></td>
       </tr>
       </tbody>
 	 	</table>
@@ -181,8 +185,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		
 		// clone a new one from the base
 		var newMeaningFieldSet = baseMeaningFieldSet.cloneNode(true);
-		
-		
 		
 		//set the new meaning fieldSet, and insert it before the submit button
 		newMeaningFieldSet.id = "meaningFieldSet" + Word.meanings.length;
@@ -389,13 +391,28 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					out.println("sample" + m + ".value = " + "'" + sample.sample + "'");
 				}
 			}
+			
 		}
 	 	%>
+	 	//disable the buttons
 	 	for(var i = 0; i < character.options.length; i++){
 			if(character.options[i].text == characterText){
 				character.options[i].selected = true;
 			}
 		}
+		var amBtns = document.getElementsByName("addMeaningBtn");
+		var asBtns = document.getElementsByName("addSampleBtn");
+		var dmBtns = document.getElementsByName("deleteMeaningBtn");
+		var dsBtns = document.getElementsByName("deleteSampleBtn");
+		
+		/*
+		var btns = [amBtns, asBtns, dmBtns, dsBtns];
+		for(var i in btns){
+			for(var j in btns[i]){
+				btns[i][j].disabled="disabled";
+			}
+		}
+		*/
 	 }
 	
 	</script>

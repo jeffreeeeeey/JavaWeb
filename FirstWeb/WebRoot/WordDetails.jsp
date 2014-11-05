@@ -116,14 +116,14 @@
 	String name = word.name;
 	String character = word.character;
 		
-	out.print("<strong>" + name + "</strong></br>");
+	out.print("<strong>" + name + "</strong><a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a></br>");
 	out.print(character + "</br>");
 	for(String ipa : word.IPAs){
 		out.println(ipa + "&nbsp;");
 	}
 	out.println("</br>");
 	for(WordMeaning meaning : word.meanings){
-		out.print("*" + meaning.meaning + "</br>");
+		out.print("*" + meaning.meaning + "&nbsp;&nbsp;<a href=\"addSample.jsp?meaning_id=" + meaning.id + "\">add sample</a></br>");
 		for(MeaningSample sample : meaning.samplesArrayList){
 			out.println("<em>" + sample.sample + "</em></br>");
 		}
