@@ -8,7 +8,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%
 	String action = (String)request.getAttribute("action");
-	Word word;
+	Word word = new Word();
 	String id = null;
 	
 	
@@ -25,6 +25,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	if(isEdit){
 		String word_idString = request.getParameter("word_id");
 		word_id = Integer.parseInt(word_idString);
+		word = (Word)request.getAttribute("word");
 	}
 	
 	/*
@@ -98,7 +99,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       </tr>
       <tr height=60>
       	<td>&nbsp;</td>
-      	<td><input type="button" disabled="<%= isEdit?"disabled":"" %>" id="newMeaning" value="add meaning" onclick="addMeaning()"></td>
+      	<td><input type="button" name="addMeaningBtn" id="newMeaning" value="add meaning" onclick="addMeaning()"></td>
       	<td>&nbsp;</td>
       </tr>
       
@@ -116,16 +117,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	 	<tr id="meaning_row">
         <td height="50"><label>Meaning</label></td>
         <td>
+        <input type=hidden name="meaningId" value=<%= isEdit? word.meanings.get(0).id:"" %>>
         <textarea name="meaning" id="meaning1_textarea" cols="30" rows="3"></textarea></td>
-        <td><input type="button" disabled="<%= isEdit?"disabled":"" %>" id="add_sample" name="addSampleBtn" value="add sample" onclick="addSample(1,'meaning_table1')"></br>
-        	<input type="button" disabled="<%= isEdit?"disabled":"" %>" name="deleteMeaningBtn" id="deleteMeaningBtn_1" value="delete meaning" onclick="deleteMeaning('meaningFieldSet1')">
+        <td><input type="button" id="add_sample" name="addSampleBtn" value="add sample" onclick="addSample(1,'meaning_table1')"></br>
+        	<input type="button" name="deleteMeaningBtn" id="deleteMeaningBtn_1" value="delete meaning" onclick="deleteMeaning('meaningFieldSet1')">
         </td>
       </tr>
       <tr id="meaning1_sample1_tr" name="sample_tr">
         <td height="50"><label for="sample1">Sample</label></td>
         <td>
+        <input type=hidden name="sampleId" value=<%= isEdit? word.meanings.get(0).samplesArrayList.get(0).id:"" %>>
         <textarea name="meaning1_sample" id="meaning1_sample1_textarea" cols="30" rows="3"></textarea></td>
-        <td><input type="button" disabled="<%= isEdit?"disabled":"" %>" id="delete_sample" name="deleteSampleBtn" value="delete sample" onclick="deleteSample('meaning1_sample1_tr')"></td>
+        <td><input type="button" id="delete_sample" name="deleteSampleBtn" value="delete sample" onclick="deleteSample('meaning1_sample1_tr')"></td>
       </tr>
       </tbody>
 	 	</table>
@@ -166,7 +169,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	var meaningFieldSet1 = document.getElementById("meaningFieldSet1");
 	var baseMeaningFieldSet = meaningFieldSet1.cloneNode(true);
 	
-	function addMeaning(){
+	function addMeaning(meaningId){
 		meaningCounter = Word.meanings.length;
 		console.log("meaningCounter:" + meaningCounter);
 		var n = meaningCounter + 1;
@@ -204,6 +207,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				ele.name = "meaning";// + (meaningCounter + 1);
 			}
 		}
+		// Iterate the hidden meaning id inputs, get the last one
+		var meaningIds = document.getElementsByName("meaningId");
+		for(i = 0; i < meaningIds.length; i++){
+			if(i == meaningIds.length - 1){
+				var ele = meaningIds[i];
+				ele.value = meaningId;
+				console.log("meaning id:" + meaningId);
+			}
+		}
+		// Iterate the hidden sample id inputs, get the last one
+		
+		
 		//Get the added sample textarea
 		var samples = document.getElementsByName("meaning1_sample");
 		
@@ -305,15 +320,20 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		var cell3 = document.createElement("td");
 		var text = document.createTextNode("sample" + sampleNum);
 		cell1.appendChild(text);
+		var idInput = document.createElement("input");
+		idInput.type = "hidden";
+		idInput.name = "sampleId";
 		var textarea = document.createElement("textarea");
 		textarea.rows = "3";
 		textarea.cols= "30";
 		textarea.id = "meaning" + meaningNum + "_sample" + sampleNum + "_textarea";
 		textarea.name = "meaning" + meaningNum + "_sample";
+		cell2.appendChild(idInput);
 		cell2.appendChild(textarea);
 		var btn = document.createElement("input");
 		btn.type = "button";
 		btn.value = "delete sample";
+		btn.name = "deleteSampleBtn";
 		btn.onclick = function(){
 			deleteSample(row.id );
 		}
@@ -362,8 +382,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		 	word = (Word)request.getAttribute("word");
 			id = String.valueOf(word.id);
 			name = word.name;
-			IPA_E = word.IPAs.get(0);
-			IPA_A = word.IPAs.get(1);
+			if(word.IPAs.size() == 2){
+				IPA_E = word.IPAs.get(0);
+				IPA_A = word.IPAs.get(1);
+			}
+			
 			character = word.character;
 			ArrayList<WordMeaning> meanings = word.meanings; 
 			out.println("name.value='" + name + "'");
@@ -372,23 +395,29 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			out.println("characterText = " + "'" + character + "'");
 			for(int i = 0; i < word.meanings.size(); i++){
 				if(i > 0){
-					out.println("addMeaning();");
+					out.println("addMeaning(" + word.meanings.get(i).id +");");
 				}
 				WordMeaning meaning = word.meanings.get(i);
 				int n = i + 1;
 				out.println("var meaning" + n + " = document.getElementById(\"meaning" + n + "_textarea\")");
 				out.println("meaning" + n + ".value = " + "'" + meaning.meaning + "'");
 				for(int j = 0; j < meaning.samplesArrayList.size(); j++){
+					//add sample textarea when there are more than one samples
 					if(j > 0){
 						int meaningNum  = i + 1;
 						String tableID = "meaning_table" + meaningNum;
 						out.println("addSample(" + i + ",'" + tableID + "');");
 					}
-					
+					//set the sample value
 					MeaningSample sample = meaning.samplesArrayList.get(j);
 					int m = j + 1;
 					out.println("var sample" + m + " = document.getElementById(\"meaning" + n + "_sample" + m + "_textarea\")");
 					out.println("sample" + m + ".value = " + "'" + sample.sample + "'");
+					//set the sample hidden id
+					out.println("var sampleIds = document.getElementsByName(\"sampleId\")");
+					out.println("var n = sampleIds.length;");
+					out.println("var ele = sampleIds[n - 1];");
+					out.println("ele.value =" + sample.id);
 				}
 			}
 			
@@ -404,15 +433,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		var asBtns = document.getElementsByName("addSampleBtn");
 		var dmBtns = document.getElementsByName("deleteMeaningBtn");
 		var dsBtns = document.getElementsByName("deleteSampleBtn");
-		
+		console.log("dsBtns:" + dsBtns.length);
 		/*
+		for(var i = 0; i < dsBtns.length; i++){
+			dsBtns[i].disabled="disabled";
+			
+		}
+		*/
+		
 		var btns = [amBtns, asBtns, dmBtns, dsBtns];
 		for(var i in btns){
 			for(var j in btns[i]){
 				btns[i][j].disabled="disabled";
 			}
 		}
-		*/
+		
 	 }
 	
 	</script>

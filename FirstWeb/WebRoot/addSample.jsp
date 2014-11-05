@@ -10,7 +10,7 @@
 	int meaning_id = Integer.parseInt(id_string);
  %>
 
-<title>Insert title here</title>
+<title>add sample</title>
 </head>
 <body>
 <%

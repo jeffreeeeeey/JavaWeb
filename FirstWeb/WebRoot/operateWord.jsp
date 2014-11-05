@@ -310,62 +310,54 @@
 			statement = connectDatabase.getStatement();
 			
 			//update word in table
+			
 			if(name.length() != 0){
 				sql = "UPDATE words SET name = " + name + ", character = " + character + "WHERE id = " + word_id;
 				result = statement.executeUpdate(sql);
+				out.println(sql);
 			}
+			out.println(sql);
 			//update IPAs
 			if(!(IPA_E.isEmpty()&&IPA_A.isEmpty())){
 				sql = "UPDATE IPAs SET IPA_E = " + IPA_E + ", IPA_A = " + IPA_A +"WHERE word_id = " + word_id;
 				statement.executeUpdate(sql);
 			}
-			
-			//insert meaning in database, get the id
-			String[] meaningValues = request.getParameterValues("meaning");
-			int n = meaningValues.length;
-			try{
-				for(int i = 0; i < n; i++){
-					String meaningString = meaningValues[i];
-					String sampleName = "meaning" + (i + 1) + "_sample";
-					String[] sampleValues = request.getParameterValues(sampleName);
-					
-					if(!meaningString.isEmpty()){
-						sql = "INSERT INTO words_meanings (word_id, meaning) values " + "('" + word_id +"', '" + meaningString + "')";
-						statement.executeUpdate(sql);
-						sql = "SELECT * FROM words_meanings ORDER BY id DESC LIMIT 1";
-						resultSet = statement.executeQuery(sql);
-						resultSet.next();
-						meaning_id = resultSet.getInt("id");
-					}
-					
-					for(String s:sampleValues){
-						sql = "INSERT INTO meaning_samples (meaning_id, sample) values " + "('" + meaning_id +"', '" + s + "')";
-						statement.executeUpdate(sql);
-						//sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
-						//resultSet = statement.executeQuery(sql);
-						//resultSet.next();
-						//sample_id = resultSet.getInt("id");
-					}
-					out.println("</br>");
+			//get the meaning ids and new values
+			String[] meaningIdStrings = request.getParameterValues("meaningId");
+			String[] meaningValueStrings = request.getParameterValues("meaning");
+			if(meaningIdStrings.length != meaningValueStrings.length){
+				out.println("id and meaning length not equal");
+			}else{
+				for(int i = 0; i < meaningIdStrings.length; i++){
+					sql= "UPDATE words_meanings SET meaning = " + meaningValueStrings[i] + "WHERE id = " + meaningIdStrings[i];
+					statement.executeUpdate(sql);
 				}
-			}catch(Exception e){
-				e.printStackTrace();
-			}finally{
+			}
+			//update sample
+			String[] sampleIdStrings = request.getParameterValues("sampleId");
+			ArrayList<String> sampleValuesArrayList = new ArrayList<String>();
+			//get samples of every meaning, add it to a list
+			for(int i = 0; i < meaningValueStrings.length; i++){
+				String meaningString = meaningValueStrings[i];
+				String sampleName = "meaning" + (i + 1) + "_sample";
+				String[] sampleValues = request.getParameterValues(sampleName);
+				for(String s : sampleValues){
+					sampleValuesArrayList.add(s);
+				}
+			}
+			if(sampleIdStrings.length != sampleValuesArrayList.size()){
+				out.println("sample not equal");
+			}else{
+				for(int i = 0; i < sampleIdStrings.length; i++){
+					sql = "UPDATE meaning_samples SET sample = " + sampleValuesArrayList.get(i) + "WHERE id = " + sampleIdStrings[i];
+				}
+			}
 				if(resultSet != null)
 					resultSet.close(); 
 				if(statement != null) 
 					statement.close();
 				if(connection != null) 
 					connection.close(); 
-			}
-			
-			//add sample in table, get the id
-			
-			out.println("<html> <body>");
-			out.println("executing: "+sql +"</br>");
-			out.println("add " + result + "words, </br>");
-			out.println("word id:" + word_id + "</br>" + "meaning id:" + meaning_id + "</br>" + "sample id:" + sample_id + "</br>");
-			out.println("</body></html>");
 		
 		}else if("addMeaning".equals(action)){
 			String word_idString = request.getParameter("word_id");
