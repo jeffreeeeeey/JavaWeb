@@ -11,7 +11,6 @@
 <title>Insert title here</title>
 </head>
 	<body>
-		
 		<br>
 		<%
 			Connection connection = null; 

@@ -1,8 +1,16 @@
 package com.selfedu;
 
 public class OperateString {
-	public String operateSQuote(String s){
-		s = s.replace('\'', '"');
-		return s;
+	public static String filterSQL(String s){
+		if (s.isEmpty()) {
+			return null;
+		}else {
+			if (s.contains("'")) {
+				s = s.replace("'", "''");
+				return s;
+			}else {
+				return s;
+			}
+		}
 	}
 }

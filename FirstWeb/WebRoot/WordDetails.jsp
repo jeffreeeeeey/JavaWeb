@@ -123,7 +123,7 @@
 	}
 	out.println("</br>");
 	for(WordMeaning meaning : word.meanings){
-		out.print("*" + meaning.meaning + "&nbsp;&nbsp;<a href=\"addSample.jsp?meaning_id=" + meaning.id + "\">add sample</a></br>");
+		out.print("*" + meaning.meaning + "&nbsp;&nbsp;<a href=\"addSample.jsp?word_id=" + word_id + "&meaning_id=" + meaning.id + "\">add sample</a></br>");
 		for(MeaningSample sample : meaning.samplesArrayList){
 			out.println("<em>" + sample.sample + "</em></br>");
 		}

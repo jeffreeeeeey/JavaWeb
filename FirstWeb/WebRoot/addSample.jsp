@@ -8,6 +8,8 @@
 <%
 	String id_string = request.getParameter("meaning_id");
 	int meaning_id = Integer.parseInt(id_string);
+	String wordIdString = request.getParameter("word_id");
+	int word_id = Integer.parseInt(wordIdString);
  %>
 
 <title>add sample</title>
@@ -37,6 +39,7 @@
  %>
   <form action="operateWord.jsp" method = "post">
  	<input type="hidden" name="action" value="addSample">
+ 	<input type="hidden" name="word_id" value=<%=word_id %>>
  	<input type="hidden" name="meaning_id" value=<%=meaning_id %>>
  	<textarea name="sample" id="sample_textarea" cols="30" rows="3"></textarea>
  	<input type="submit" name="button" id="button" value="Save" />

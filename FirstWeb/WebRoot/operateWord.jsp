@@ -51,6 +51,7 @@
 		
 		//add word in table, get the id
 		if(name.length() != 0){
+			name = operateString.filterSQL(name);
 			sql = "INSERT INTO words " + "(name, character) values " + "('" + name + "', '" + character + "')";
 			result = statement.executeUpdate(sql);
 			
@@ -76,6 +77,7 @@
 				String[] sampleValues = request.getParameterValues(sampleName);
 				
 				if(!meaningString.isEmpty()){
+					meaningString = OperateString.filterSQL(meaningString);
 					sql = "INSERT INTO words_meanings (word_id, meaning) values " + "('" + word_id +"', '" + meaningString + "')";
 					statement.executeUpdate(sql);
 					sql = "SELECT * FROM words_meanings ORDER BY id DESC LIMIT 1";
@@ -85,6 +87,7 @@
 				}
 				
 				for(String s:sampleValues){
+					s = OperateString.filterSQL(s);
 					sql = "INSERT INTO meaning_samples (meaning_id, sample) values " + "('" + meaning_id +"', '" + s + "')";
 					statement.executeUpdate(sql);
 					//sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
@@ -364,7 +367,6 @@
 				if(connection != null) 
 					connection.close(); 
 		//forward to detail
-		
 		request.getRequestDispatcher("/WordDetails.jsp?word_id=" + word_id).forward(request, response);
 		%>
 		
@@ -385,8 +387,6 @@
 			ConnectDatabase connectDatabase = new ConnectDatabase();
 			statement = connectDatabase.getStatement();
 			
-			//statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-			//resultSet = statement.getGeneratedKeys();
 			statement.executeUpdate(sql);
 			sql = "SELECT * FROM words_meanings ORDER BY id desc LIMIT 1";
 			resultSet = statement.executeQuery(sql);
@@ -400,6 +400,8 @@
 		statement.close();
 			if(connection != null) 
 		connection.close(); 
+			//forward to detail
+			request.getRequestDispatcher("/WordDetails.jsp?word_id=" + word_id).forward(request, response);
 		%>
 		
 		<%--add sample --%>
@@ -407,24 +409,22 @@
 		}else if("addSample".equals(action)){
 			String meaning_idString = request.getParameter("meaning_id");
 			int meaning_id = Integer.parseInt(meaning_idString);
+			String wordIdString = request.getParameter("word_id");
+			int word_id = Integer.parseInt(wordIdString);
 			String sample = request.getParameter("sample");
 			int sample_id = 0;
 			
 			Connection connection = null;
 			Statement statement = null;
 			ResultSet resultSet = null;
+			sample = operateString.filterSQL(sample);
 			String sql = "INSERT INTO meaning_samples (meaning_id, sample) VALUES ('" + meaning_id + "', '" + sample + "')";
-			sql = operateString.operateSQuote(sql);
-			//Class.forName("com.mysql.jdbc.Driver"); 
-			//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
+			
 			try{
 		ConnectDatabase connectDatabase = new ConnectDatabase();
 		statement = connectDatabase.getStatement();
-		
-		//statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-		//resultSet = statement.getGeneratedKeys();
-		
 		statement.executeUpdate(sql);
+		
 		sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
 		resultSet = statement.executeQuery(sql);
 		if(resultSet.next()!=false){
@@ -448,7 +448,8 @@
 			statement.close();
 		if(connection != null) 
 			connection.close();
-			 
+		//forward to detail
+		request.getRequestDispatcher("/WordDetails.jsp?word_id=" + word_id).forward(request, response);	 
 		}
 		out.println("</br>end of page");
 	%>
