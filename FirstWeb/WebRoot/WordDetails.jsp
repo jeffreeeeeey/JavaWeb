@@ -116,7 +116,7 @@
 	String name = word.name;
 	String character = word.character;
 		
-	out.print("<strong>" + name + "</strong><a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a></br>");
+	out.print("<strong>" + name + "</strong>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"operateWord.jsp?action=edit&word_id=" + word_id + "\">edit</a></br><a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a></br>");
 	out.print(character + "</br>");
 	for(String ipa : word.IPAs){
 		out.println(ipa + "&nbsp;");

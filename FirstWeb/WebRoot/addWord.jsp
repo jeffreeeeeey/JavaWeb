@@ -6,39 +6,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<%
+
+
+<html>
+  <head>
+  	<%
 	String action = (String)request.getAttribute("action");
 	Word word = new Word();
-	String id = null;
+	String id = null;//in edit, use js to set its value
 	
-	
-	int word_id = -1; 
+	int word_id = 0; 
 	String name = null;
 	String IPA_E = null;
 	String IPA_A = null;
 	String character = null;
 	
-	//String meaning = null;
-	//String sample = null;
-	
 	boolean isEdit = "edit".equals(action);
+	out.print("is eidt?:" + isEdit + "</br>");
 	if(isEdit){
-		String word_idString = request.getParameter("word_id");
-		word_id = Integer.parseInt(word_idString);
+		//String word_idString = request.getParameter("word_id");
+		//word_id = Integer.parseInt(word_idString);
 		word = (Word)request.getAttribute("word");
 	}
-	
-	/*
-	String id = (String)request.getAttribute("word_id");
-	String name = (String)request.getAttribute("name");
-	String IPA_E = (String)request.getAttribute("PLA_E");
-	String IPA_A = (String)request.getAttribute("PLA_A");
-	
-	*/
-%>
-
-<html>
-  <head>
+	%>
+  
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href="<%=basePath%>">
     
@@ -58,7 +49,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <div>
 	 <form action="operateWord.jsp" method = "post" id="addWordForm">
 	 	<input type="hidden" name="action" value=<%= isEdit?"save":"add" %>>
-	 	<input type="hidden" name="id" value="<%=isEdit ? word_id : "" %>"> 
+	 	<input type="hidden" name="id" value="<%=isEdit ? word.id : "" %>"> 
 	 	<h1><%= isEdit ? "Edit Word" : "Add New Word" %></h1>
 	 	<fieldset id="baseFieldSet">
 	 		<legend><h2>basic</h2></legend>
@@ -381,6 +372,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	 	if(isEdit){
 		 	word = (Word)request.getAttribute("word");
 			id = String.valueOf(word.id);
+			
 			name = word.name;
 			if(word.IPAs.size() == 2){
 				IPA_E = word.IPAs.get(0);

@@ -189,9 +189,6 @@
 	<%--edit --%>
 	<%
 		try{
-			String word_idString = request.getParameter("word_id");
-			int word_id = Integer.parseInt(word_idString);
-			
 			/*
 			out.println("word_id:" + word_idString + "</br>");
 			String sql = "SELECT * FROM words WHERE id = " + word_id;
@@ -258,6 +255,8 @@
 				}
 				
 				*/
+				String word_idString = request.getParameter("word_id");
+				int word_id = Integer.parseInt(word_idString);
 				
 				Connection connection = null;
 				Statement statement = null;
@@ -265,6 +264,7 @@
 				
 				ConnectDatabase connectDatabase = new ConnectDatabase();
 				Word word = connectDatabase.getWord(word_id);
+				int theId = word.id;
 				
 				request.setAttribute("word", word);
 				
@@ -288,15 +288,15 @@
 		%>
 		<%--update --%>
 		<%
-		}else if("Save".equals(action)){
-			String word_idString = request.getParameter("word_id");
+		}else if("save".equals(action)){
+			String word_idString = request.getParameter("id");
 			int word_id = Integer.parseInt(word_idString);
 			String name = request.getParameter("name");
 			String IPA_E = request.getParameter("IPA_E");
 			String IPA_A = request.getParameter("IPA_A");
 			String character = request.getParameter("character");
 			
-			
+			out.println("here");
 			String sql = null;
 			
 			Connection connection = null;
@@ -312,15 +312,16 @@
 			//update word in table
 			
 			if(name.length() != 0){
-				sql = "UPDATE words SET name = " + name + ", character = " + character + "WHERE id = " + word_id;
+				sql = "UPDATE words SET name = '" + name + "', character = '" + character + "' WHERE id = " + word_id;
 				result = statement.executeUpdate(sql);
-				out.println(sql);
+				out.println(sql + "</br>");
 			}
-			out.println(sql);
+			
 			//update IPAs
 			if(!(IPA_E.isEmpty()&&IPA_A.isEmpty())){
-				sql = "UPDATE IPAs SET IPA_E = " + IPA_E + ", IPA_A = " + IPA_A +"WHERE word_id = " + word_id;
+				sql = "UPDATE IPAs SET IPA_E = '" + IPA_E + "', IPA_A = '" + IPA_A +"' WHERE word_id = " + word_id;
 				statement.executeUpdate(sql);
+				out.println(sql + "</br>");
 			}
 			//get the meaning ids and new values
 			String[] meaningIdStrings = request.getParameterValues("meaningId");
@@ -329,8 +330,9 @@
 				out.println("id and meaning length not equal");
 			}else{
 				for(int i = 0; i < meaningIdStrings.length; i++){
-					sql= "UPDATE words_meanings SET meaning = " + meaningValueStrings[i] + "WHERE id = " + meaningIdStrings[i];
+					sql= "UPDATE words_meanings SET meaning = '" + meaningValueStrings[i] + "' WHERE id = " + meaningIdStrings[i];
 					statement.executeUpdate(sql);
+					out.println(sql + "</br>");
 				}
 			}
 			//update sample
@@ -349,7 +351,9 @@
 				out.println("sample not equal");
 			}else{
 				for(int i = 0; i < sampleIdStrings.length; i++){
-					sql = "UPDATE meaning_samples SET sample = " + sampleValuesArrayList.get(i) + "WHERE id = " + sampleIdStrings[i];
+					sql = "UPDATE meaning_samples SET sample = '" + sampleValuesArrayList.get(i) + "' WHERE id = " + sampleIdStrings[i];
+					out.println(sql + "</br>");
+					statement.executeUpdate(sql);
 				}
 			}
 				if(resultSet != null)
@@ -358,6 +362,9 @@
 					statement.close();
 				if(connection != null) 
 					connection.close(); 
+		//forward to detail
+		
+		request.getRequestDispatcher("/WordDetails.jsp?word_id=" + word_id).forward(request, response);
 		
 		}else if("addMeaning".equals(action)){
 			String word_idString = request.getParameter("word_id");

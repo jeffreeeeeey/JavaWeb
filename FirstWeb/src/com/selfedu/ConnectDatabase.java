@@ -34,6 +34,9 @@ public class ConnectDatabase {
 			resultSet.next();
 			String name = resultSet.getString("name");
 			String character = resultSet.getString("character");
+			String idString = resultSet.getString("id");
+			
+			word.id = Integer.parseInt(idString);
 			word.name = name;
 			word.character = character;
 			resultSet = statement.executeQuery("SELECT * FROM IPAs WHERE word_id = " + word_id);
