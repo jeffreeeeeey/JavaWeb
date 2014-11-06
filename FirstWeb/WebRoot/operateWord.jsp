@@ -9,6 +9,7 @@
 <%--add --%>
 <% 
 	String action = request.getParameter("action");
+	OperateString operateString = new OperateString();
 	
 	if("add".equals(action)){
 		/*
@@ -60,10 +61,10 @@
 			word_id = resultSet.getInt("id");
 		}
 		//add IPAs
-		if(!(IPA_E.isEmpty()&&IPA_A.isEmpty())){
+		
 			sql = "INSERT INTO IPAs (word_id, IPA_E, IPA_A) VALUES " + "('" + word_id + "','" + IPA_E + "','" + IPA_A +"')";
 			statement.executeUpdate(sql);
-		}
+		
 		
 		//insert meaning in database, get the id
 		String[] meaningValues = request.getParameterValues("meaning");
@@ -365,7 +366,10 @@
 		//forward to detail
 		
 		request.getRequestDispatcher("/WordDetails.jsp?word_id=" + word_id).forward(request, response);
+		%>
 		
+		<%--add meaning --%>
+		<%
 		}else if("addMeaning".equals(action)){
 			String word_idString = request.getParameter("word_id");
 			
@@ -378,11 +382,8 @@
 			ResultSet resultSet = null;
 			String sql = "INSERT INTO words_meanings (word_id, meaning) VALUES ('" + word_id + "', '" + meaning + "')";
 			
-			//Class.forName("com.mysql.jdbc.Driver"); 
-			//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
-			Class.forName("org.sqlite.JDBC");
-			connection =DriverManager.getConnection("jdbc:sqlite:E:/360Clouds/360Clouds/Words/WordsSQLite.db");
-			statement = connection.createStatement();
+			ConnectDatabase connectDatabase = new ConnectDatabase();
+			statement = connectDatabase.getStatement();
 			
 			//statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 			//resultSet = statement.getGeneratedKeys();
@@ -399,6 +400,10 @@
 		statement.close();
 			if(connection != null) 
 		connection.close(); 
+		%>
+		
+		<%--add sample --%>
+		<%
 		}else if("addSample".equals(action)){
 			String meaning_idString = request.getParameter("meaning_id");
 			int meaning_id = Integer.parseInt(meaning_idString);
@@ -409,7 +414,7 @@
 			Statement statement = null;
 			ResultSet resultSet = null;
 			String sql = "INSERT INTO meaning_samples (meaning_id, sample) VALUES ('" + meaning_id + "', '" + sample + "')";
-			
+			sql = operateString.operateSQuote(sql);
 			//Class.forName("com.mysql.jdbc.Driver"); 
 			//connection =DriverManager.getConnection("jdbc:mysql://localhost:3306/wordsDB","root", "123456"); 
 			try{

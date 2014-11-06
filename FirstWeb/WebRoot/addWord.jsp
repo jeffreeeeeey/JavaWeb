@@ -22,7 +22,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	String character = null;
 	
 	boolean isEdit = "edit".equals(action);
-	out.print("is eidt?:" + isEdit + "</br>");
+	//out.print("is eidt?:" + isEdit + "</br>");
 	if(isEdit){
 		//String word_idString = request.getParameter("word_id");
 		//word_id = Integer.parseInt(word_idString);
