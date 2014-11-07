@@ -31,7 +31,10 @@
 				statement = connectDatabase.getStatement();
 				
 				resultSet = statement.executeQuery("select * from words");
+				int n = 0;//count the row number.
+				
 				while(resultSet.next()){ 
+					n++;
 					int id = resultSet.getInt("id");
 					String name = resultSet.getString("name"); 
 					String character = resultSet.getString("character");

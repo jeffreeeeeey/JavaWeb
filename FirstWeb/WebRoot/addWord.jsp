@@ -240,7 +240,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		}
 		
 		//Set the add sample button
-		var addSampleButtons = document.getElementsByName("add_sample");
+		var addSampleButtons = document.getElementsByName("addSampleBtn");
 		for (var i = 0; i < addSampleButtons.length; i++) {
 			if(i == addSampleButtons.length - 1){
 				var ele = addSampleButtons[i];
@@ -315,7 +315,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		idInput.name = "sampleId";
 		var textarea = document.createElement("textarea");
 		textarea.rows = "3";
-		textarea.cols= "30";
+		textarea.cols= "50";
 		textarea.id = "meaning" + meaningNum + "_sample" + sampleNum + "_textarea";
 		textarea.name = "meaning" + meaningNum + "_sample";
 		cell2.appendChild(idInput);
