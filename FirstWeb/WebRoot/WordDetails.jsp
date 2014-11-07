@@ -16,6 +16,7 @@
 	String id_string = request.getParameter("word_id");
 	int word_id = Integer.parseInt(id_string);
  %>
+<link rel="stylesheet" type="text/css" href="main.css" />
 <title>Insert title here</title>
 </head>
 <body>
@@ -119,11 +120,12 @@
 	out.print("<strong>" + name + "</strong>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"operateWord.jsp?action=edit&word_id=" + word_id + "\">edit</a></br><a href=\"addMeaning.jsp?word_id=" + word_id + "\">add meaning</a></br>");
 	out.print(character + "</br>");
 	for(String ipa : word.IPAs){
-		out.println(ipa + "&nbsp;");
+		out.println("/" + ipa + "/&nbsp;");
 	}
 	out.println("</br>");
+	int n = 0;
 	for(WordMeaning meaning : word.meanings){
-		out.print("*" + meaning.meaning + "&nbsp;&nbsp;<a href=\"addSample.jsp?word_id=" + word_id + "&meaning_id=" + meaning.id + "\">add sample</a></br>");
+		out.print("<font color=blue>" + (++n) + "</font>.&nbsp;" + meaning.meaning + "&nbsp;&nbsp;<a href=\"addSample.jsp?word_id=" + word_id + "&meaning_id=" + meaning.id + "\">add sample</a></br>");
 		for(MeaningSample sample : meaning.samplesArrayList){
 			out.println("<em>" + sample.sample + "</em></br>");
 		}

@@ -76,7 +76,7 @@
 				String sampleName = "meaning" + (i + 1) + "_sample";
 				String[] sampleValues = request.getParameterValues(sampleName);
 				
-				if(!meaningString.isEmpty()){
+				if(true){
 					meaningString = OperateString.filterSQL(meaningString);
 					sql = "INSERT INTO words_meanings (word_id, meaning) values " + "('" + word_id +"', '" + meaningString + "')";
 					statement.executeUpdate(sql);
@@ -116,8 +116,8 @@
 		out.println("word id:" + word_id + "</br>" + "meaning id:" + meaning_id + "</br>" + "sample id:" + sample_id + "</br>");
 		out.println("</body></html>");
 		
-		//request.setAttribute("word_id", word_id);
-		//request.getRequestDispatcher("/WordDetails.jsp").forward(request, response);
+		request.setAttribute("word_id", word_id);
+		request.getRequestDispatcher("/WordDetails.jsp?word_id=" + word_id).forward(request, response);
 	//end of add
 	}else if("del".equals(action)){
 	%>
@@ -316,6 +316,7 @@
 			//update word in table
 			
 			if(name.length() != 0){
+				name = operateString.filterSQL(name);
 				sql = "UPDATE words SET name = '" + name + "', character = '" + character + "' WHERE id = " + word_id;
 				result = statement.executeUpdate(sql);
 				out.println(sql + "</br>");
@@ -334,7 +335,9 @@
 				out.println("id and meaning length not equal");
 			}else{
 				for(int i = 0; i < meaningIdStrings.length; i++){
-					sql= "UPDATE words_meanings SET meaning = '" + meaningValueStrings[i] + "' WHERE id = " + meaningIdStrings[i];
+					String m = meaningValueStrings[i];
+					m = operateString.filterSQL(m);
+					sql= "UPDATE words_meanings SET meaning = '" + m + "' WHERE id = " + meaningIdStrings[i];
 					statement.executeUpdate(sql);
 					out.println(sql + "</br>");
 				}
@@ -355,7 +358,9 @@
 				out.println("sample not equal");
 			}else{
 				for(int i = 0; i < sampleIdStrings.length; i++){
-					sql = "UPDATE meaning_samples SET sample = '" + sampleValuesArrayList.get(i) + "' WHERE id = " + sampleIdStrings[i];
+					String s = sampleValuesArrayList.get(i);
+					s = operateString.filterSQL(s);
+					sql = "UPDATE meaning_samples SET sample = '" + s + "' WHERE id = " + sampleIdStrings[i];
 					out.println(sql + "</br>");
 					statement.executeUpdate(sql);
 				}
@@ -374,9 +379,10 @@
 		<%
 		}else if("addMeaning".equals(action)){
 			String word_idString = request.getParameter("word_id");
-			
 			int word_id = Integer.parseInt(word_idString);
 			String meaning = request.getParameter("meaning");
+			meaning = OperateString.filterSQL(meaning);
+			
 			int meaning_id = 0;
 			
 			Connection connection = null;
@@ -417,7 +423,7 @@
 			Connection connection = null;
 			Statement statement = null;
 			ResultSet resultSet = null;
-			sample = operateString.filterSQL(sample);
+			sample = OperateString.filterSQL(sample);
 			String sql = "INSERT INTO meaning_samples (meaning_id, sample) VALUES ('" + meaning_id + "', '" + sample + "')";
 			
 			try{

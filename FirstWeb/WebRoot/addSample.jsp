@@ -11,7 +11,7 @@
 	String wordIdString = request.getParameter("word_id");
 	int word_id = Integer.parseInt(wordIdString);
  %>
-
+<link rel="stylesheet" type="text/css" href="main.css" />
 <title>add sample</title>
 </head>
 <body>

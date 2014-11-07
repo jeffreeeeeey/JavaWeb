@@ -40,9 +40,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<meta http-equiv="expires" content="0">    
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
-	<!--
-	<link rel="stylesheet" type="text/css" href="styles.css">
-	-->
+	<link rel="stylesheet" type="text/css" href="main.css" />
 	
 	</head>
 	<body>
@@ -78,6 +76,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	      	<select id="character" name="character">
 	      	<option>noun</option>
 	      	<option>adjective</option>
+	      	<option>verb</option>
 	      	<option>adverb</option>
 	      	<option>article</option>
 	      	<option>prep</option>
@@ -109,7 +108,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <td height="50"><label>Meaning</label></td>
         <td>
         <input type=hidden name="meaningId" value=<%= isEdit? word.meanings.get(0).id:"" %>>
-        <textarea name="meaning" id="meaning1_textarea" cols="30" rows="3"></textarea></td>
+        <textarea name="meaning" id="meaning1_textarea" cols="50" rows="3"></textarea></td>
         <td><input type="button" id="add_sample" name="addSampleBtn" value="add sample" onclick="addSample(1,'meaning_table1')"></br>
         	<input type="button" name="deleteMeaningBtn" id="deleteMeaningBtn_1" value="delete meaning" onclick="deleteMeaning('meaningFieldSet1')">
         </td>
@@ -118,7 +117,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <td height="50"><label for="sample1">Sample</label></td>
         <td>
         <input type=hidden name="sampleId" value=<%= isEdit? word.meanings.get(0).samplesArrayList.get(0).id:"" %>>
-        <textarea name="meaning1_sample" id="meaning1_sample1_textarea" cols="30" rows="3"></textarea></td>
+        <textarea name="meaning1_sample" id="meaning1_sample1_textarea" cols="50" rows="3"></textarea></td>
         <td><input type="button" id="delete_sample" name="deleteSampleBtn" value="delete sample" onclick="deleteSample('meaning1_sample1_tr')"></td>
       </tr>
       </tbody>

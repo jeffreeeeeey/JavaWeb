@@ -10,7 +10,7 @@
 	String id_string = request.getParameter("word_id");
 	int word_id = Integer.parseInt(id_string);
  %>
-
+<link rel="stylesheet" type="text/css" href="main.css" />
 </head>
 <body>
 <%

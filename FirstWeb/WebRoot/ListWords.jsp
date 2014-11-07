@@ -8,6 +8,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="stylesheet" type="text/css" href="main.css" />
 <title>Insert title here</title>
 </head>
 	<body>
@@ -33,8 +34,9 @@
 				while(resultSet.next()){ 
 					int id = resultSet.getInt("id");
 					String name = resultSet.getString("name"); 
+					String character = resultSet.getString("character");
 				
-					out.println("<a href = \"WordDetails.jsp?word_id=" + id +"\">" + name + "</a>&nbsp;");
+					out.println("<a href = \"WordDetails.jsp?word_id=" + id +"\">" + name + "</a>&nbsp;" + character + "&nbsp;&nbsp;");
 					out.println("    <a href =\"operateWord.jsp?action=edit&word_id=" + id + "\">Edit </a>&nbsp;&nbsp;"); 
 					out.println("    <a href =\"operateWord.jsp?action=del&word_id=" + id + "\">delete </a></br>"); 
 					} 
