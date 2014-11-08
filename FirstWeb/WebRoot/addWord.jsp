@@ -11,6 +11,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <html>
   <head>
   	<%
+  	OperateString operateString = new OperateString();
 	String action = (String)request.getAttribute("action");
 	Word word = new Word();
 	String id = null;//in edit, use js to set its value
@@ -56,7 +57,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       <tr>
         <td height="50"><label for="1">Word</label></td>
         <td>
-        <input type="text" name="name" id="wordNameInput" value="<%= isEdit?name:""%>"/></td>
+        <input type="text" name="name" id="wordNameInput" style="font-size: 25px; font-weight: bolder;" autofocus="true" value="<%= isEdit?name:""%>"/></td>
         <td>&nbsp;</td>
       </tr>
       <tr>
@@ -84,6 +85,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	      	<option>conjunction</option>
 	      	<option>numeral</option>
 	      	<option>interjection</option>
+	      	<option>determiner</option>
 	      	</select>
       	</td>
       </tr>
@@ -109,8 +111,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <td>
         <input type=hidden name="meaningId" value=<%= isEdit? word.meanings.get(0).id:"" %>>
         <textarea name="meaning" id="meaning1_textarea" cols="50" rows="3"></textarea></td>
-        <td><input type="button" id="add_sample" name="addSampleBtn" value="add sample" onclick="addSample(1,'meaning_table1')"></br>
-        	<input type="button" name="deleteMeaningBtn" id="deleteMeaningBtn_1" value="delete meaning" onclick="deleteMeaning('meaningFieldSet1')">
+        <td><input type="button" id="add_sample" name="addSampleBtn" value="add sample" onclick="addSample(1,'meaning_table1')"></br></br>
+        	<input type="button" class="deletebtn" name="deleteMeaningBtn" id="deleteMeaningBtn_1" value="delete meaning" onclick="deleteMeaning('meaningFieldSet1')">
         </td>
       </tr>
       <tr id="meaning1_sample1_tr" name="sample_tr">
@@ -118,16 +120,26 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <td>
         <input type=hidden name="sampleId" value=<%= isEdit? word.meanings.get(0).samplesArrayList.get(0).id:"" %>>
         <textarea name="meaning1_sample" id="meaning1_sample1_textarea" cols="50" rows="3"></textarea></td>
-        <td><input type="button" id="delete_sample" name="deleteSampleBtn" value="delete sample" onclick="deleteSample('meaning1_sample1_tr')"></td>
+        <td><input type="button" class="deletebtn" id="delete_sample" name="deleteSampleBtn" value="delete sample" onclick="deleteSample('meaning1_sample1_tr')"></td>
+      </tr>
+      <tr>
+      <td>&nbsp;</td>
+      <td></td>
+      <td>&nbsp;</td>
       </tr>
       </tbody>
 	 	</table>
 	 	</fieldset>
 	 	
 	 	<table id="submitTable">
+	 	<tr height=60>
+      	<td>&nbsp;</td>
+      	<td><input type="button" name="addMeaningBtn" id="newMeaning" value="add meaning" onclick="addMeaning()"></td>
+      	<td>&nbsp;</td>
+      </tr>
 	 	<tr>
         <td width = "100">&nbsp;</td>
-        <td><input type="submit" name="button" id="button" value="<%= isEdit? "Save" : "Add" %>" /></td>
+        <td><input type="submit" name="button"  class="mainBtn" id="button" value="<%= isEdit? "Save" : "Add" %>" /></td>
         <td>&nbsp;</td>
       </tr>
 	 	</table>
@@ -294,7 +306,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		console.log("meaning num:" + meaningNum);
 		meaningNum++;
 		
-		var theMeaning = Word.meanings[meaningNum - 1];
+		var theMeaning = Word.meanings[meaningNum - 2];
 		var sampleNum = theMeaning.samples.length + 1;
 		//add an object to samples array
 		var newSample = new Object();
@@ -324,6 +336,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		btn.type = "button";
 		btn.value = "delete sample";
 		btn.name = "deleteSampleBtn";
+		btn.className = "deletebtn";
 		btn.onclick = function(){
 			deleteSample(row.id );
 		}
@@ -388,10 +401,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				if(i > 0){
 					out.println("addMeaning(" + word.meanings.get(i).id +");");
 				}
+				// set the ' to \'
 				WordMeaning meaning = word.meanings.get(i);
+				String ms = meaning.meaning;
+				ms = operateString.jsOutputString(ms);
 				int n = i + 1;
 				out.println("var meaning" + n + " = document.getElementById(\"meaning" + n + "_textarea\")");
-				out.println("meaning" + n + ".value = " + "'" + meaning.meaning + "'");
+				out.println("meaning" + n + ".value = " + "'" + ms + "'");
 				for(int j = 0; j < meaning.samplesArrayList.size(); j++){
 					//add sample textarea when there are more than one samples
 					if(j > 0){
@@ -401,9 +417,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					}
 					//set the sample value
 					MeaningSample sample = meaning.samplesArrayList.get(j);
+					String ss = sample.sample;
+					ss = operateString.jsOutputString(ss);
 					int m = j + 1;
 					out.println("var sample" + m + " = document.getElementById(\"meaning" + n + "_sample" + m + "_textarea\")");
-					out.println("sample" + m + ".value = " + "'" + sample.sample + "'");
+					out.println("sample" + m + ".value = " + "'" + ss + "'");
 					//set the sample hidden id
 					out.println("var sampleIds = document.getElementsByName(\"sampleId\")");
 					out.println("var n = sampleIds.length;");

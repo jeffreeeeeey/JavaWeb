@@ -12,5 +12,18 @@ public class OperateString {
 				return s;
 			}
 		}
+	}//end of filterSQL  
+	public static String jsOutputString(String s){
+		if (s.isEmpty()) {
+			return null;
+		}else{
+			if (s.contains("'")) {
+				s = s.replace("'", "\\'");
+				return s;
+			}else {
+				return s;
+			}
+		}
+		
 	}
 }

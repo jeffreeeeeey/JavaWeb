@@ -2,3 +2,12 @@
 
 body,td,th,textarea {font-size: 18px;} 
 textarea {cols:150;}
+input.mainbtn{
+	font-size:20px;
+	color:white;
+	background-color:blue;
+	
+}
+input.deletebtn{
+	color:red;
+}
