@@ -13,4 +13,14 @@ public class Word {
 	public String character;
 	public ArrayList<String> IPAs;
 	public ArrayList<WordMeaning> meanings;
+	
+	public int getId(){
+		return id;
+	}
+	public String getName(){
+		return name;
+	}
+	public String getCharacter(){
+		return character;
+	}
 }

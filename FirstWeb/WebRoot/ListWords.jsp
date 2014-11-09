@@ -1,9 +1,12 @@
-<%@ page language="java" contentType="text/html; charset=utf8" pageEncoding="utf-8" %>
 
-<%@ page import="com.selfedu.ConnectDatabase" %>
-<%@ page import="java.sql.*" %>
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-
+<%@ page language="java" contentType="text/html; charset=utf8" pageEncoding="utf-8" %>
+<%@ page import="com.selfedu.*" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="java.util.ArrayList"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,17 +36,50 @@
 				resultSet = statement.executeQuery("select * from words");
 				int n = 0;//count the row number.
 				
-				while(resultSet.next()){ 
-					n++;
-					int id = resultSet.getInt("id");
-					String name = resultSet.getString("name"); 
-					String character = resultSet.getString("character");
+				//add words to an arraylist.
+				ArrayList<Word> wordsArrayList = new ArrayList<Word>();
 				
-					out.println(n + ".&nbsp;<a href = \"WordDetails.jsp?word_id=" + id +"\">" + name + "</a>&nbsp;" + character + "&nbsp;&nbsp;");
-					out.println("    <a href =\"operateWord.jsp?action=edit&word_id=" + id + "\">Edit </a>&nbsp;&nbsp;"); 
-					out.println("    <a href =\"operateWord.jsp?action=del&word_id=" + id + "\">delete </a></br>"); 
+				while(resultSet.next()){ 
+					int id = resultSet.getInt("id");
+					String name = resultSet.getString("name");
+					Word word = connectDatabase.getWord(id);
+					
+					//out.print(word.name + "</br>");
+					wordsArrayList.add(word);
 					} 
-				out.println("</br></br>");
+				out.println("there are " + wordsArrayList.size() + "words now.</br>");
+				request.setAttribute("wordsArrayList", wordsArrayList);
+				%>
+				<table border="1">
+					<tbody>
+						<tr>
+							<td>id</td>
+							<td>word</td>
+							<td>character</td>
+							<td>operation</td>
+						</tr>
+					<c:forEach items="${ wordsArrayList }" var="w" varStatus="varstatus">
+						<tr>
+							<td>${varstatus.count }</td>
+							<td><a href = ${"WordDetails.jsp?word_id="}${ w.id }>${w.name }</a></td>
+							<td>${w.character }</td>
+							<td><a href = ${"operateWord.jsp?action=edit&word_id=" }${w.id }>Edit</a>&nbsp;&nbsp;<a href =${ "operateWord.jsp?action=del&word_id="}${w.id }>delete</a></td>
+						</tr>
+					</c:forEach>
+					</tbody>
+				
+				</table>
+				
+				<%
+				/*
+				for(Word w : wordsArrayList){
+					n++;
+					out.println(n + ".&nbsp;<a href = \"WordDetails.jsp?word_id=" + w.id +"\">" + w.name + "</a>&nbsp;" + w.character + "&nbsp;&nbsp;");
+					out.println("    <a href =\"operateWord.jsp?action=edit&word_id=" + w.id + "\">Edit </a>&nbsp;&nbsp;"); 
+					out.println("    <a href =\"operateWord.jsp?action=del&word_id=" + w.id + "\">delete </a></br>"); 
+			
+				}*/
+				
 				}catch(SQLException e){
 					e.printStackTrace(); 
 				}

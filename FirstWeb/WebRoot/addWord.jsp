@@ -6,8 +6,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-
-
 <html>
   <head>
   	<%
@@ -80,12 +78,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	      	<option>verb</option>
 	      	<option>adverb</option>
 	      	<option>article</option>
+	      	<option>conjunction</option>
+	      	<option>determiner</option>
+	      	<option>interjection</option>
+	      	<option>numeral</option>
 	      	<option>prep</option>
 	      	<option>pronoun</option>
-	      	<option>conjunction</option>
-	      	<option>numeral</option>
-	      	<option>interjection</option>
-	      	<option>determiner</option>
 	      	</select>
       	</td>
       </tr>
