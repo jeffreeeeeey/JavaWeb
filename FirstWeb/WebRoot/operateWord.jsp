@@ -85,15 +85,16 @@
 					resultSet.next();
 					meaning_id = resultSet.getInt("id");
 				}
-				
-				for(String s:sampleValues){
-					s = OperateString.filterSQL(s);
-					sql = "INSERT INTO meaning_samples (meaning_id, sample) values " + "('" + meaning_id +"', '" + s + "')";
-					statement.executeUpdate(sql);
-					//sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
-					//resultSet = statement.executeQuery(sql);
-					//resultSet.next();
-					//sample_id = resultSet.getInt("id");
+				if(sampleValues.length > 0){
+					for(String s:sampleValues){
+						s = OperateString.filterSQL(s);
+						sql = "INSERT INTO meaning_samples (meaning_id, sample) values " + "('" + meaning_id +"', '" + s + "')";
+						statement.executeUpdate(sql);
+						//sql = "SELECT * FROM meaning_samples ORDER BY id DESC LIMIT 1";
+						//resultSet = statement.executeQuery(sql);
+						//resultSet.next();
+						//sample_id = resultSet.getInt("id");
+					}
 				}
 				out.println("</br>");
 			}
