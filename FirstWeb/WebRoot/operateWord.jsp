@@ -74,7 +74,8 @@
 			for(int i = 0; i < n; i++){
 				String meaningString = meaningValues[i];
 				String sampleName = "meaning" + (i + 1) + "_sample";
-				String[] sampleValues = request.getParameterValues(sampleName);
+				String[] sampleValues = null;
+				sampleValues = request.getParameterValues(sampleName);
 				
 				if(true){
 					meaningString = OperateString.filterSQL(meaningString);
@@ -85,7 +86,7 @@
 					resultSet.next();
 					meaning_id = resultSet.getInt("id");
 				}
-				if(sampleValues.length > 0){
+				if(sampleValues != null){
 					for(String s:sampleValues){
 						s = OperateString.filterSQL(s);
 						sql = "INSERT INTO meaning_samples (meaning_id, sample) values " + "('" + meaning_id +"', '" + s + "')";
