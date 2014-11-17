@@ -78,6 +78,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	      	<option>verb</option>
 	      	<option>adverb</option>
 	      	<option>article</option>
+	      	<option>auxiliary verb</option>
 	      	<option>conjunction</option>
 	      	<option>determiner</option>
 	      	<option>interjection</option>
